@@ -23,7 +23,6 @@ import org.apache.calcite.util.ImmutableNullableList;
 
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
 /**
  * A <code>SqlSelect</code> is a node of a parse tree which represents a select
@@ -41,6 +40,7 @@ public class SqlSelect extends SqlCall {
   SqlNodeList keywordList;
   SqlNodeList selectList;
   SqlNode from;
+  SqlNode mySqlIndexHint;
   SqlNode where;
   SqlNodeList groupBy;
   SqlNode having;
@@ -50,23 +50,40 @@ public class SqlSelect extends SqlCall {
   SqlNode fetch;
 
   //~ Constructors -----------------------------------------------------------
+  public SqlSelect(SqlParserPos pos,
+                   SqlNodeList keywordList,
+                   SqlNodeList selectList,
+                   SqlNode from,
+                   SqlNode where,
+                   SqlNodeList groupBy,
+                   SqlNode having,
+                   SqlNodeList windowDecls,
+                   SqlNodeList orderBy,
+                   SqlNode offset,
+                   SqlNode fetch) {
+    this(pos, keywordList, selectList, from, where, groupBy, having, windowDecls, orderBy, offset,
+        fetch, null);
+  }
+
 
   public SqlSelect(SqlParserPos pos,
-      SqlNodeList keywordList,
-      SqlNodeList selectList,
-      SqlNode from,
-      SqlNode where,
-      SqlNodeList groupBy,
-      SqlNode having,
-      SqlNodeList windowDecls,
-      SqlNodeList orderBy,
-      SqlNode offset,
-      SqlNode fetch) {
+                   SqlNodeList keywordList,
+                   SqlNodeList selectList,
+                   SqlNode from,
+                   SqlNode where,
+                   SqlNodeList groupBy,
+                   SqlNode having,
+                   SqlNodeList windowDecls,
+                   SqlNodeList orderBy,
+                   SqlNode offset,
+                   SqlNode fetch,
+                   SqlNode mySqlIndexHint) {
     super(pos);
     this.keywordList = Objects.requireNonNull(keywordList != null
         ? keywordList : new SqlNodeList(pos));
     this.selectList = selectList;
     this.from = from;
+    this.mySqlIndexHint = mySqlIndexHint;
     this.where = where;
     this.groupBy = groupBy;
     this.having = having;
@@ -89,7 +106,7 @@ public class SqlSelect extends SqlCall {
 
   @Override public List<SqlNode> getOperandList() {
     return ImmutableNullableList.of(keywordList, selectList, from, where,
-        groupBy, having, windowDecls, orderBy, offset, fetch);
+        groupBy, having, windowDecls, orderBy, offset, fetch, mySqlIndexHint);
   }
 
   @Override public void setOperand(int i, SqlNode operand) {
@@ -124,6 +141,9 @@ public class SqlSelect extends SqlCall {
     case 9:
       fetch = operand;
       break;
+    case 10:
+      mySqlIndexHint = operand;
+      break;
     default:
       throw new AssertionError(i);
     }
@@ -156,10 +176,6 @@ public class SqlSelect extends SqlCall {
     return groupBy;
   }
 
-  public void setGroupBy(SqlNodeList groupBy) {
-    this.groupBy = groupBy;
-  }
-
   public final SqlNode getHaving() {
     return having;
   }
@@ -184,16 +200,12 @@ public class SqlSelect extends SqlCall {
     this.where = whereClause;
   }
 
-  @Nonnull public final SqlNodeList getWindowList() {
+  public final SqlNodeList getWindowList() {
     return windowDecls;
   }
 
   public final SqlNodeList getOrderList() {
     return orderBy;
-  }
-
-  public void setOrderBy(SqlNodeList orderBy) {
-    this.orderBy = orderBy;
   }
 
   public final SqlNode getOffset() {
@@ -212,6 +224,46 @@ public class SqlSelect extends SqlCall {
     this.fetch = fetch;
   }
 
+  public SqlNodeList getKeywordList() {
+    return keywordList;
+  }
+
+  public void setKeywordList(SqlNodeList keywordList) {
+    this.keywordList = keywordList;
+  }
+
+  public SqlNode getMySqlIndexHint() {
+    return mySqlIndexHint;
+  }
+
+  public void setMySqlIndexHint(SqlNode mySqlIndexHint) {
+    this.mySqlIndexHint = mySqlIndexHint;
+  }
+
+  public SqlNodeList getGroupBy() {
+    return groupBy;
+  }
+
+  public void setGroupBy(SqlNodeList groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public SqlNodeList getWindowDecls() {
+    return windowDecls;
+  }
+
+  public void setWindowDecls(SqlNodeList windowDecls) {
+    this.windowDecls = windowDecls;
+  }
+
+  public SqlNodeList getOrderBy() {
+    return orderBy;
+  }
+
+  public void setOrderBy(SqlNodeList orderBy) {
+    this.orderBy = orderBy;
+  }
+
   public void validate(SqlValidator validator, SqlValidatorScope scope) {
     validator.validateQuery(this, scope, validator.getUnknownType());
   }
@@ -224,10 +276,12 @@ public class SqlSelect extends SqlCall {
       // ORDER. In this case, we don't need a wrapper frame.)
       final SqlWriter.Frame frame =
           writer.startList(SqlWriter.FrameTypeEnum.SUB_QUERY, "(", ")");
-      writer.getDialect().unparseCall(writer, this, 0, 0);
+      writer.getDialect()
+          .unparseCall(writer, this, 0, 0);
       writer.endList(frame);
     } else {
-      writer.getDialect().unparseCall(writer, this, leftPrec, rightPrec);
+      writer.getDialect()
+          .unparseCall(writer, this, leftPrec, rightPrec);
     }
   }
 

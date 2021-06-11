@@ -35,20 +35,60 @@ public class SqlInsert extends SqlCall {
   SqlNode targetTable;
   SqlNode source;
   SqlNodeList columnList;
+  SqlNode functionCall;
+  SqlNodeList sourceColumnList;
+  SqlIdentifier modelSourceTableName;
+  boolean overwrite = false;
+  boolean fromModel = false;
 
   //~ Constructors -----------------------------------------------------------
 
   public SqlInsert(SqlParserPos pos,
-      SqlNodeList keywords,
-      SqlNode targetTable,
-      SqlNode source,
-      SqlNodeList columnList) {
+                   SqlNodeList keywords,
+                   SqlNode targetTable,
+                   SqlNode source,
+                   SqlNodeList columnList) {
     super(pos);
     this.keywords = keywords;
     this.targetTable = targetTable;
     this.source = source;
     this.columnList = columnList;
     assert keywords != null;
+  }
+
+  public SqlInsert(SqlParserPos pos,
+                   SqlNodeList keywords,
+                   SqlNode targetTable,
+                   SqlNode source,
+                   SqlNodeList columnList,
+                   Boolean overwrite,
+                   Boolean fromModel) {
+    super(pos);
+    this.keywords = keywords;
+    this.targetTable = targetTable;
+    this.source = source;
+    this.columnList = columnList;
+    this.overwrite = overwrite;
+    this.fromModel = fromModel;
+    assert keywords != null;
+  }
+
+  public SqlInsert(SqlParserPos pos,
+                   SqlNode targetTable,
+                   SqlNodeList columnList,
+                   SqlNode functionCall,
+                   SqlNodeList sourceColumnList,
+                   SqlIdentifier modelSourceTableName,
+                   boolean overwrite,
+                   boolean fromModel) {
+    super(pos);
+    this.targetTable = targetTable;
+    this.columnList = columnList;
+    this.functionCall = functionCall;
+    this.sourceColumnList = sourceColumnList;
+    this.modelSourceTableName = modelSourceTableName;
+    this.overwrite = overwrite;
+    this.fromModel = fromModel;
   }
 
   //~ Methods ----------------------------------------------------------------
@@ -65,11 +105,13 @@ public class SqlInsert extends SqlCall {
     return ImmutableNullableList.of(keywords, targetTable, source, columnList);
   }
 
-  /** Returns whether this is an UPSERT statement.
+  /**
+   * Returns whether this is an UPSERT statement.
    *
    * <p>In SQL, this is represented using the {@code UPSERT} keyword rather than
    * {@code INSERT}; in the abstract syntax tree, an UPSERT is indicated by the
-   * presence of a {@link SqlInsertKeyword#UPSERT} keyword. */
+   * presence of a {@link SqlInsertKeyword#UPSERT} keyword.
+   */
   public final boolean isUpsert() {
     return getModifierNode(SqlInsertKeyword.UPSERT) != null;
   }
@@ -121,17 +163,20 @@ public class SqlInsert extends SqlCall {
   }
 
   public final SqlNode getModifierNode(SqlInsertKeyword modifier) {
-    for (SqlNode keyword : keywords) {
-      SqlInsertKeyword keyword2 =
-          ((SqlLiteral) keyword).symbolValue(SqlInsertKeyword.class);
-      if (keyword2 == modifier) {
-        return keyword;
+    if (keywords != null) {
+      for (SqlNode keyword : keywords) {
+        SqlInsertKeyword keyword2 =
+            ((SqlLiteral) keyword).symbolValue(SqlInsertKeyword.class);
+        if (keyword2 == modifier) {
+          return keyword;
+        }
       }
     }
     return null;
   }
 
   @Override public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
+
     writer.startList(SqlWriter.FrameTypeEnum.SELECT);
     writer.sep(isUpsert() ? "UPSERT INTO" : "INSERT INTO");
     final int opLeft = getOperator().getLeftPrec();
@@ -141,7 +186,17 @@ public class SqlInsert extends SqlCall {
       columnList.unparse(writer, opLeft, opRight);
     }
     writer.newlineAndIndent();
-    source.unparse(writer, 0, 0);
+    if (source != null) {
+      source.unparse(writer, 0, 0);
+    }
+  }
+
+  public boolean isOverwrite() {
+    return overwrite;
+  }
+
+  public boolean isFromModel() {
+    return fromModel;
   }
 
   public void validate(SqlValidator validator, SqlValidatorScope scope) {

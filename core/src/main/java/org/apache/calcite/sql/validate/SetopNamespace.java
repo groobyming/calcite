@@ -92,6 +92,8 @@ public class SetopNamespace extends AbstractNamespace {
     switch (call.getKind()) {
     case UNION:
     case INTERSECT:
+    case SHOW_MODELS:
+      case TRAIN:
     case EXCEPT:
       final SqlValidatorScope scope = validator.scopes.get(call);
       for (SqlNode operand : call.getOperandList()) {

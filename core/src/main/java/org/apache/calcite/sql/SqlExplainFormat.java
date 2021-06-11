@@ -28,6 +28,9 @@ public enum SqlExplainFormat {
   /** Indicates that the plan should be output in XML format. */
   XML,
 
+  /** Indicates that the plan should be output in GRAPHVIZ format. */
+  GRAPHVIZ,
+
   /** Indicates that the plan should be output in JSON format. */
   JSON;
 

@@ -153,6 +153,11 @@ public enum SqlKind {
   UPDATE,
 
   /**
+   * USE INDEX (MYSQL)
+   */
+  USE_INDEX,
+
+  /**
    * "ALTER scope SET option = value" statement.
    */
   SET_OPTION,
@@ -417,6 +422,16 @@ public enum SqlKind {
   SIMILAR,
 
   /**
+   * The "RLIKE" operator.
+   */
+  RLIKE,
+
+  /**
+   * The "REGEXP" operator.
+   */
+  REGEXP,
+
+  /**
    * The "~" operator.
    */
   POSIX_REGEX_CASE_SENSITIVE,
@@ -440,6 +455,16 @@ public enum SqlKind {
    * The "NULLIF" operator.
    */
   NULLIF,
+
+  /**
+   * The "IF" operator.
+   */
+  IF,
+
+  /**
+   * The "INTERVAL" operator.
+   */
+  INTERVAL,
 
   /**
    * The "COALESCE" operator.
@@ -702,6 +727,11 @@ public enum SqlKind {
    * "::".
    */
   CAST,
+
+  /**
+   * The "TRY_CAST" function
+   */
+  TRY_CAST,
 
   /**
    * The "NEXT VALUE OF sequence" operator.
@@ -1058,6 +1088,9 @@ public enum SqlKind {
   /** {@code DROP TABLE} DDL statement. */
   DROP_TABLE,
 
+  /** {@code DROP MODEL} DDL statement. */
+  DROP_MODEL,
+
   /** {@code CREATE VIEW} DDL statement. */
   CREATE_VIEW,
 
@@ -1105,6 +1138,13 @@ public enum SqlKind {
 
   /** {@code DROP FUNCTION} DDL statement. */
   DROP_FUNCTION,
+
+  /** {@code SHOW MODEL} show models statement*/
+  SHOW_MODELS,
+  SHOW_TRAIN_MODEL,
+  SHOW,
+  SHOW_SQL,
+  TRAIN,
 
   /** DDL statement not handled above.
    *
@@ -1176,6 +1216,12 @@ public enum SqlKind {
           SET_OPTION, OTHER_DDL);
 
   /**
+   * Category consisting of all model operations.
+   */
+  public static final EnumSet<SqlKind> MODEL =
+          EnumSet.of(SHOW, TRAIN, SHOW_SQL);
+
+  /**
    * Category consisting of query node types.
    *
    * <p>Consists of:
@@ -1233,7 +1279,7 @@ public enum SqlKind {
    *
    * <p>Consists of all types in {@link #QUERY}, {@link #DML} and {@link #DDL}.
    */
-  public static final EnumSet<SqlKind> TOP_LEVEL = concat(QUERY, DML, DDL);
+  public static final EnumSet<SqlKind> TOP_LEVEL = concat(QUERY, DML, DDL, MODEL);
 
   /**
    * Category consisting of regular and special functions.

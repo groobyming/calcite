@@ -27,7 +27,7 @@ import org.apache.calcite.sql.SqlWriter;
  * Operator that appears in a {@code GROUP BY} clause: {@code CUBE},
  * {@code ROLLUP}, {@code GROUPING SETS}.
  */
-class SqlRollupOperator extends SqlInternalOperator {
+public class SqlRollupOperator extends SqlInternalOperator {
   SqlRollupOperator(String name, SqlKind kind) {
     super(name, kind, 4);
   }

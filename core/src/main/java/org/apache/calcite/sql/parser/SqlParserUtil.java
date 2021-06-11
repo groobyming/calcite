@@ -45,10 +45,9 @@ import org.apache.calcite.util.TimestampString;
 import org.apache.calcite.util.Util;
 import org.apache.calcite.util.trace.CalciteTrace;
 
+import static org.apache.calcite.util.Static.RESOURCE;
+
 import com.google.common.base.Preconditions;
-
-import org.slf4j.Logger;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -61,8 +60,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
-
-import static org.apache.calcite.util.Static.RESOURCE;
+import org.slf4j.Logger;
 
 /**
  * Utility methods relating to parsing SQL.
@@ -100,9 +98,15 @@ public final class SqlParserUtil {
    * quotes and unescaping internal doubled quotes).
    */
   public static String parseString(String s) {
-    int i = s.indexOf("'"); // start of body
-    if (i > 0) {
-      s = s.substring(i);
+    int singleQuoteIndex = s.indexOf("'"); // start of body
+    int doubleQuoteIndex = s.indexOf("\"");
+    if (singleQuoteIndex >= 0) {
+      s = s.substring(singleQuoteIndex);
+      return strip(s, "'", "'", "''", Casing.UNCHANGED);
+    }
+    if (doubleQuoteIndex >= 0) {
+      s = s.substring(doubleQuoteIndex);
+      return strip(s, "\"", "\"", "\"\"", Casing.UNCHANGED);
     }
     return strip(s, "'", "'", "''", Casing.UNCHANGED);
   }
@@ -169,7 +173,7 @@ public final class SqlParserUtil {
   }
 
   public static SqlTimestampLiteral parseTimestampLiteral(String s,
-      SqlParserPos pos) {
+                                                          SqlParserPos pos) {
     final String dateStr = parseString(s);
     final Format format = Format.PER_THREAD.get();
     DateTimeUtils.PrecisionTime pt = null;
@@ -195,8 +199,16 @@ public final class SqlParserUtil {
   }
 
   public static SqlIntervalLiteral parseIntervalLiteral(SqlParserPos pos,
-      int sign, String s, SqlIntervalQualifier intervalQualifier) {
-    final String intervalStr = parseString(s);
+                                                        int sign, String s,
+                                                        SqlIntervalQualifier intervalQualifier) {
+    String intervalStr = "";
+    int singleQuoteIndex = s.indexOf("'");
+    int doubleQuoteIndex = s.indexOf("\"");
+    if (singleQuoteIndex < 0 && doubleQuoteIndex < 0) {
+      intervalStr = parseInteger(s).toString();
+    } else {
+      intervalStr = parseString(s);
+    }
     if (intervalStr.equals("")) {
       throw SqlUtil.newContextException(pos,
           RESOURCE.illegalIntervalLiteral(s + " "
@@ -298,8 +310,8 @@ public final class SqlParserUtil {
   /**
    * Parses a positive int. All characters have to be digits.
    *
-   * @see Integer#parseInt(String)
    * @throws java.lang.NumberFormatException if invalid number or leading '-'
+   * @see Integer#parseInt(String)
    */
   public static int parsePositiveInt(String value) {
     value = value.trim();
@@ -344,7 +356,7 @@ public final class SqlParserUtil {
    * Unquotes a quoted string, using different quotes for beginning and end.
    */
   public static String strip(String s, String startQuote, String endQuote,
-      String escape, Casing casing) {
+                             String escape, Casing casing) {
     if (startQuote != null) {
       assert endQuote != null;
       assert startQuote.length() == 1;
@@ -459,7 +471,7 @@ public final class SqlParserUtil {
       int prevj = j;
       j = nextLine(sql, j);
       if ((j < 0) || (j > i)) {
-        return new int[]{line + 1, i - prevj + 1};
+        return new int[] {line + 1, i - prevj + 1};
       }
       ++line;
     }
@@ -659,7 +671,7 @@ public final class SqlParserUtil {
    * @return the root node of the tree which the list condenses into
    */
   public static SqlNode toTreeEx(SqlSpecialOperator.TokenSequence list,
-      int start, final int minPrec, final SqlKind stopperKind) {
+                                 int start, final int minPrec, final SqlKind stopperKind) {
     PrecedenceClimbingParser parser = list.parser(start,
         token -> {
           if (token instanceof PrecedenceClimbingParser.Op) {
@@ -734,7 +746,9 @@ public final class SqlParserUtil {
 
   //~ Inner Classes ----------------------------------------------------------
 
-  /** The components of a collation definition, per the SQL standard. */
+  /**
+   * The components of a collation definition, per the SQL standard.
+   */
   public static class ParsedCollation {
     private final Charset charset;
     private final Locale locale;
@@ -807,9 +821,11 @@ public final class SqlParserUtil {
     }
   }
 
-  /** Implementation of
+  /**
+   * Implementation of
    * {@link org.apache.calcite.sql.SqlSpecialOperator.TokenSequence}
-   * based on an existing parser. */
+   * based on an existing parser.
+   */
   private static class TokenSequenceImpl
       implements SqlSpecialOperator.TokenSequence {
     final List<PrecedenceClimbingParser.Token> list;
@@ -818,19 +834,6 @@ public final class SqlParserUtil {
     private TokenSequenceImpl(PrecedenceClimbingParser parser) {
       this.parser = parser;
       this.list = parser.all();
-    }
-
-    public PrecedenceClimbingParser parser(int start,
-        Predicate<PrecedenceClimbingParser.Token> predicate) {
-      return parser.copy(start, predicate);
-    }
-
-    public int size() {
-      return list.size();
-    }
-
-    public SqlOperator op(int i) {
-      return ((ToTreeListItem) list.get(i).o).getOperator();
     }
 
     private static SqlParserPos pos(PrecedenceClimbingParser.Token token) {
@@ -850,6 +853,19 @@ public final class SqlParserUtil {
       }
     }
 
+    public PrecedenceClimbingParser parser(int start,
+                                           Predicate<PrecedenceClimbingParser.Token> predicate) {
+      return parser.copy(start, predicate);
+    }
+
+    public int size() {
+      return list.size();
+    }
+
+    public SqlOperator op(int i) {
+      return ((ToTreeListItem) list.get(i).o).getOperator();
+    }
+
     public SqlParserPos pos(int i) {
       return pos(list.get(i));
     }
@@ -867,8 +883,10 @@ public final class SqlParserUtil {
     }
   }
 
-  /** Implementation of
-   * {@link org.apache.calcite.sql.SqlSpecialOperator.TokenSequence}. */
+  /**
+   * Implementation of
+   * {@link org.apache.calcite.sql.SqlSpecialOperator.TokenSequence}.
+   */
   private static class OldTokenSequenceImpl
       implements SqlSpecialOperator.TokenSequence {
     final List<Object> list;
@@ -877,8 +895,9 @@ public final class SqlParserUtil {
       this.list = list;
     }
 
-    @Override public PrecedenceClimbingParser parser(int start,
-        Predicate<PrecedenceClimbingParser.Token> predicate) {
+    @Override
+    public PrecedenceClimbingParser parser(int start,
+                                           Predicate<PrecedenceClimbingParser.Token> predicate) {
       final PrecedenceClimbingParser.Builder builder =
           new PrecedenceClimbingParser.Builder();
       for (Object o : Util.skip(list, start)) {
@@ -945,8 +964,10 @@ public final class SqlParserUtil {
     }
   }
 
-  /** Pre-initialized {@link DateFormat} objects, to be used within the current
-   * thread, because {@code DateFormat} is not thread-safe. */
+  /**
+   * Pre-initialized {@link DateFormat} objects, to be used within the current
+   * thread, because {@code DateFormat} is not thread-safe.
+   */
   private static class Format {
     private static final ThreadLocal<Format> PER_THREAD =
         ThreadLocal.withInitial(Format::new);

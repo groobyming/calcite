@@ -32,21 +32,21 @@ import java.util.List;
 public class SqlOrderBy extends SqlCall {
   public static final SqlSpecialOperator OPERATOR = new Operator() {
     @Override public SqlCall createCall(SqlLiteral functionQualifier,
-        SqlParserPos pos, SqlNode... operands) {
+                                        SqlParserPos pos, SqlNode... operands) {
       return new SqlOrderBy(pos, operands[0], (SqlNodeList) operands[1],
           operands[2], operands[3]);
     }
   };
 
-  public final SqlNode query;
-  public final SqlNodeList orderList;
-  public final SqlNode offset;
-  public final SqlNode fetch;
+  public SqlNode query;
+  public SqlNodeList orderList;
+  public SqlNode offset;
+  public SqlNode fetch;
 
   //~ Constructors -----------------------------------------------------------
 
   public SqlOrderBy(SqlParserPos pos, SqlNode query, SqlNodeList orderList,
-      SqlNode offset, SqlNode fetch) {
+                    SqlNode offset, SqlNode fetch) {
     super(pos);
     this.query = query;
     this.orderList = orderList;
@@ -55,6 +55,21 @@ public class SqlOrderBy extends SqlCall {
   }
 
   //~ Methods ----------------------------------------------------------------
+  public void setQuery(SqlNode query) {
+    this.query = query;
+  }
+
+  public void setOrderList(SqlNodeList orderList) {
+    this.orderList = orderList;
+  }
+
+  public void setOffset(SqlNode offset) {
+    this.offset = offset;
+  }
+
+  public void setFetch(SqlNode fetch) {
+    this.fetch = fetch;
+  }
 
   @Override public SqlKind getKind() {
     return SqlKind.ORDER_BY;
@@ -68,7 +83,9 @@ public class SqlOrderBy extends SqlCall {
     return ImmutableNullableList.of(query, orderList, offset, fetch);
   }
 
-  /** Definition of {@code ORDER BY} operator. */
+  /**
+   * Definition of {@code ORDER BY} operator.
+   */
   private static class Operator extends SqlSpecialOperator {
     private Operator() {
       // NOTE:  make precedence lower then SELECT to avoid extra parens

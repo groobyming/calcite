@@ -16,23 +16,26 @@
  */
 package org.apache.calcite.sql;
 
+import static org.apache.calcite.util.Static.RESOURCE;
+
+import com.google.common.collect.ImmutableList;
 import org.apache.calcite.linq4j.function.Functions;
 import org.apache.calcite.rel.type.RelDataType;
+import org.apache.calcite.rel.type.RelDataTypeSystem;
 import org.apache.calcite.sql.type.SqlOperandTypeChecker;
 import org.apache.calcite.sql.type.SqlOperandTypeInference;
 import org.apache.calcite.sql.type.SqlReturnTypeInference;
+import org.apache.calcite.sql.type.SqlTypeFactoryImpl;
+import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorScope;
 import org.apache.calcite.sql.validate.implicit.TypeCoercion;
 import org.apache.calcite.util.Util;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
-import static org.apache.calcite.util.Static.RESOURCE;
+import javax.annotation.Nonnull;
 
 /**
  * A <code>SqlFunction</code> is a type of operator which has conventional
@@ -221,6 +224,10 @@ public class SqlFunction extends SqlOperator {
       SqlValidatorScope scope,
       SqlCall call,
       boolean convertRowArgToColumnList) {
+    if (validator.shouldSkipFunctionValid()) {
+      final RelDataType type = new SqlTypeFactoryImpl(RelDataTypeSystem.DEFAULT).createSqlType(SqlTypeName.ANY);
+      return type;
+    }
     // Scope for operands. Usually the same as 'scope'.
     final SqlValidatorScope operandScope = scope.getOperandScope(call);
 

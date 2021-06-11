@@ -46,8 +46,9 @@ public class SqlNodeList extends SqlNode implements Iterable<SqlNode> {
       };
 
   //~ Instance fields --------------------------------------------------------
-
   private final List<SqlNode> list;
+  //vector or array
+  private Boolean vector = false;
 
   //~ Constructors -----------------------------------------------------------
 
@@ -68,6 +69,19 @@ public class SqlNodeList extends SqlNode implements Iterable<SqlNode> {
       SqlParserPos pos) {
     super(pos);
     list = new ArrayList<>(collection);
+  }
+
+  /**
+   * the same as SqlNodeList(collection, pos),but add a label to
+   * tell whether the list is a vector (or else an array)
+   */
+  public SqlNodeList(
+          Collection<? extends SqlNode> collection,
+          SqlParserPos pos,
+          Boolean vector) {
+    super(pos);
+    list = new ArrayList<>(collection);
+    this.vector = vector;
   }
 
   //~ Methods ----------------------------------------------------------------
@@ -99,6 +113,10 @@ public class SqlNodeList extends SqlNode implements Iterable<SqlNode> {
 
   public int size() {
     return list.size();
+  }
+
+  public boolean isVector() {
+    return this.vector;
   }
 
   public void unparse(

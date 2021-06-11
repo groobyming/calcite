@@ -28,21 +28,24 @@ import org.apache.calcite.schema.ImplementableFunction;
 import org.apache.calcite.schema.ScalarFunction;
 import org.apache.calcite.sql.SqlOperatorBinding;
 
-import com.google.common.collect.ImmutableMultimap;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 import static org.apache.calcite.util.Static.RESOURCE;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMultimap;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
+
 /**
-* Implementation of {@link org.apache.calcite.schema.ScalarFunction}.
-*/
+ * Implementation of {@link org.apache.calcite.schema.ScalarFunction}.
+ */
 public class ScalarFunctionImpl extends ReflectiveFunctionBase
     implements ScalarFunction, ImplementableFunction {
   private final CallImplementor implementor;
 
-  /** Private constructor. */
+  /**
+   * Private constructor.
+   */
   private ScalarFunctionImpl(Method method, CallImplementor implementor) {
     super(method);
     this.implementor = implementor;
@@ -76,7 +79,7 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
    * <p>If a method of the given name is not found or it does not suit,
    * returns {@code null}.
    *
-   * @param clazz class that is used to implement the function
+   * @param clazz      class that is used to implement the function
    * @param methodName Method name (typically "eval")
    * @return created {@link ScalarFunction} or null
    */
@@ -99,7 +102,8 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
     if (!Modifier.isStatic(method.getModifiers())) {
       Class clazz = method.getDeclaringClass();
       if (!classHasPublicZeroArgsConstructor(clazz)) {
-        throw RESOURCE.requireDefaultConstructor(clazz.getName()).ex();
+        throw RESOURCE.requireDefaultConstructor(clazz.getName())
+            .ex();
       }
     }
     CallImplementor implementor = createImplementor(method);
@@ -120,14 +124,6 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
     return new ScalarFunctionImpl(method, implementor);
   }
 
-  public RelDataType getReturnType(RelDataTypeFactory typeFactory) {
-    return typeFactory.createJavaType(method.getReturnType());
-  }
-
-  public CallImplementor getImplementor() {
-    return implementor;
-  }
-
   private static CallImplementor createImplementor(final Method method) {
     final NullPolicy nullPolicy = getNullPolicy(method);
     return RexImpTable.createImplementor(
@@ -139,21 +135,48 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
       return NullPolicy.STRICT;
     } else if (m.getAnnotation(SemiStrict.class) != null) {
       return NullPolicy.SEMI_STRICT;
-    } else if (m.getDeclaringClass().getAnnotation(Strict.class) != null) {
+    } else if (m.getDeclaringClass()
+        .getAnnotation(Strict.class) != null) {
       return NullPolicy.STRICT;
-    } else if (m.getDeclaringClass().getAnnotation(SemiStrict.class) != null) {
+    } else if (m.getDeclaringClass()
+        .getAnnotation(SemiStrict.class) != null) {
       return NullPolicy.SEMI_STRICT;
     } else {
       return NullPolicy.NONE;
     }
   }
 
+  public RelDataType getReturnType(RelDataTypeFactory typeFactory) {
+    return typeFactory.createJavaType(method.getReturnType());
+  }
+
+  public CallImplementor getImplementor() {
+    return implementor;
+  }
+
   public RelDataType getReturnType(RelDataTypeFactory typeFactory,
-      SqlOperatorBinding opBinding) {
+                                   SqlOperatorBinding opBinding) {
     // Strict and semi-strict functions can return null even if their Java
     // functions return a primitive type. Because when one of their arguments
     // is null, they won't even be called.
     final RelDataType returnType = getReturnType(typeFactory);
+    ReturnTypeInference returnTypeInference = method.getAnnotation(ReturnTypeInference.class);
+    if (returnTypeInference != null) {
+      TypeInferencePolicy pilicy = returnTypeInference.type();
+      switch (pilicy) {
+      case PARAMETER_BIGGEST:
+        break;
+      case PARAMETER_INDEX:
+        int referIndex = returnTypeInference.referIndex();
+        Preconditions.checkArgument(referIndex >= 0);
+        Preconditions.checkArgument(referIndex < opBinding.collectOperandTypes()
+            .size());
+        List<RelDataType> operandTypes = opBinding.collectOperandTypes();
+        RelDataType operandType = operandTypes.get(referIndex);
+        return operandType;
+      }
+
+    }
     switch (getNullPolicy(method)) {
     case STRICT:
       for (RelDataType type : opBinding.collectOperandTypes()) {

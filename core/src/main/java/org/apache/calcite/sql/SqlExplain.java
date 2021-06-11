@@ -58,6 +58,7 @@ public class SqlExplain extends SqlCall {
   SqlLiteral detailLevel;
   SqlLiteral depth;
   SqlLiteral format;
+  SqlLiteral type;
   private final int dynamicParameterCount;
 
   //~ Constructors -----------------------------------------------------------
@@ -68,11 +69,22 @@ public class SqlExplain extends SqlCall {
       SqlLiteral depth,
       SqlLiteral format,
       int dynamicParameterCount) {
+    this(pos, explicandum, detailLevel, depth, format, null,dynamicParameterCount);
+  }
+
+  public SqlExplain(SqlParserPos pos,
+          SqlNode explicandum,
+          SqlLiteral detailLevel,
+          SqlLiteral depth,
+          SqlLiteral format,
+          SqlLiteral type,
+          int dynamicParameterCount) {
     super(pos);
     this.explicandum = explicandum;
     this.detailLevel = detailLevel;
     this.depth = depth;
     this.format = format;
+    this.type = type;
     this.dynamicParameterCount = dynamicParameterCount;
   }
 
@@ -87,7 +99,7 @@ public class SqlExplain extends SqlCall {
   }
 
   public List<SqlNode> getOperandList() {
-    return ImmutableNullableList.of(explicandum, detailLevel, depth, format);
+    return ImmutableNullableList.of(explicandum, detailLevel, depth, format, type);
   }
 
   @Override public void setOperand(int i, SqlNode operand) {
@@ -103,6 +115,9 @@ public class SqlExplain extends SqlCall {
       break;
     case 3:
       format = (SqlLiteral) operand;
+      break;
+    case 4:
+      type = (SqlLiteral) operand;
       break;
     default:
       throw new AssertionError(i);
@@ -156,6 +171,13 @@ public class SqlExplain extends SqlCall {
    */
   public SqlExplainFormat getFormat() {
     return format.symbolValue(SqlExplainFormat.class);
+  }
+
+  /**
+   * Returns the desired type.
+   */
+  public SqlExplainType getType() {
+    return type.symbolValue(SqlExplainType.class);
   }
 
   /**

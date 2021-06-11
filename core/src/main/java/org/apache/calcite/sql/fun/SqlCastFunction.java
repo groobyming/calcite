@@ -89,6 +89,15 @@ public class SqlCastFunction extends SqlFunction {
         SqlFunctionCategory.SYSTEM);
   }
 
+  public SqlCastFunction(String alias, SqlKind kind) {
+    super(alias,
+            kind,
+            null,
+            InferTypes.FIRST_KNOWN,
+            null,
+            SqlFunctionCategory.SYSTEM);
+  }
+
   //~ Methods ----------------------------------------------------------------
 
   public RelDataType inferReturnType(

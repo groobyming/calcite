@@ -790,6 +790,18 @@ public interface SqlValidator {
 
   /** Get the type coercion instance. */
   TypeCoercion getTypeCoercion();
+
+  /**
+   * Flag whether to skip function verification
+   * @return whether to skip function verification
+   */
+  boolean shouldSkipFunctionValid();
+
+  /**
+   * Whether to allow non-aggregated fields to appear in group by
+   * @return Whether to allow non-aggregated fields to appear in group by
+   */
+  boolean allowGroupByWithNoAggItem();
 }
 
 // End SqlValidator.java

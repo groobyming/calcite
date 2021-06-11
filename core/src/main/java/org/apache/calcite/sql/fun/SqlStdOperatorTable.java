@@ -1357,6 +1357,18 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
           SqlBetweenOperator.Flag.SYMMETRIC,
           true);
 
+  public static final SqlSpecialOperator NOT_REGEXP =
+          new SqlLikeOperator("NOT REGEXP", SqlKind.REGEXP, true);
+
+  public static final SqlSpecialOperator REGEXP =
+          new SqlLikeOperator("REGEXP", SqlKind.REGEXP, false);
+
+  public static final SqlSpecialOperator NOT_RLIKE =
+          new SqlLikeOperator("NOT RLIKE", SqlKind.RLIKE, true);
+
+  public static final SqlSpecialOperator RLIKE =
+          new SqlLikeOperator("RLIKE", SqlKind.RLIKE, false);
+
   public static final SqlSpecialOperator NOT_LIKE =
       new SqlLikeOperator("NOT LIKE", SqlKind.LIKE, true);
 
@@ -1762,6 +1774,16 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
   public static final SqlFunction NULLIF = new SqlNullifFunction();
 
   /**
+   * The IF function
+   */
+  public static final SqlFunction IF = new SqlIfFunction();
+
+  /**
+   * The INTERVAL function
+   */
+  public static final SqlFunction INTERVAL = new SqlIntervalFunction();
+
+  /**
    * The COALESCE builtin function.
    */
   public static final SqlFunction COALESCE = new SqlCoalesceFunction();
@@ -1897,6 +1919,15 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
    * the value is NULL, an exception will be thrown.</p>
    */
   public static final SqlFunction CAST = new SqlCastFunction();
+
+  /**
+   * The SQL TRY_CAST operator.
+   *
+   * The SQL syntax is
+   *
+   * TRY_CAST(expression as type)
+   */
+  public static final SqlFunction TRY_CAST = new SqlTryCastFunction();
 
   /**
    * The SQL <code>EXTRACT</code> operator. Extracts a specified field value

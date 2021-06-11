@@ -94,6 +94,10 @@ class AggChecker extends SqlBasicVisitor<Void> {
       return null;
     }
 
+    if (validator.allowGroupByWithNoAggItem()) {
+      return null;
+    }
+
     // Is it a call to a parentheses-free function?
     final SqlCall call = validator.makeNullaryCall(id);
     if (call != null) {

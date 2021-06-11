@@ -18,16 +18,16 @@ limitations under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.apache.calcite</groupId>
+    <groupId>com.tencent.bk.base.datalab</groupId>
     <artifactId>calcite</artifactId>
-    <version>1.21.0</version>
+    <version>1.21.0-bkbase.2</version>
   </parent>
 
   <artifactId>calcite-core</artifactId>
   <packaging>jar</packaging>
-  <version>1.21.0</version>
+  <version>1.21.0-bkbase.2</version>
   <name>Calcite Core</name>
-  <description>Core Calcite APIs and engine.</description>
+  <description>Calcite Core modified by Tencent blueking</description>
 
   <properties>
     <top.dir>${project.basedir}/..</top.dir>
@@ -46,7 +46,7 @@ limitations under the License.
       <artifactId>avatica-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.calcite</groupId>
+      <groupId>com.tencent.bk.base.datalab</groupId>
       <artifactId>calcite-linq4j</artifactId>
     </dependency>
     <dependency>
@@ -405,6 +405,43 @@ limitations under the License.
                 <ignoredUsedUndeclaredDependency>org.eclipse.jetty:jetty-server</ignoredUsedUndeclaredDependency>
               </ignoredUsedUndeclaredDependencies>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <sourceFileExcludes>
+                <sourceFileExclude>**/target/**/*.java</sourceFileExclude>
+              </sourceFileExcludes>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>27B59EF7777A67354829E6F423296DF5C906EAEC</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
