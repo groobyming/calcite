@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Parse tree for {@code CREATE MATERIALIZED VIEW} statement.
  */
-public class SqlCreateTableFromModel extends SqlCreate
+public class SqlCreateTableFromModel extends SqlCreateTable
     implements SqlExecutableStatement {
   private static final SqlOperator OPERATOR =
       new SqlSpecialOperator("CREATE MATERIALIZED VIEW",
@@ -58,7 +58,7 @@ public class SqlCreateTableFromModel extends SqlCreate
   public SqlCreateTableFromModel(SqlParserPos pos, boolean replace,
                                  boolean ifNotExists, SqlIdentifier name, SqlNodeList columnList,
                                  SqlNode query) {
-    super(OPERATOR, pos, replace, ifNotExists);
+    super(pos, replace, ifNotExists, name, columnList, query);
     this.name = Objects.requireNonNull(name);
     this.columnList = columnList; // may be null
     this.query = Objects.requireNonNull(query);
@@ -121,6 +121,10 @@ public class SqlCreateTableFromModel extends SqlCreate
 
   public SqlSelect getQuery() {
     return (SqlSelect) query;
+  }
+
+  public SqlIdentifier getName () {
+    return this.name;
   }
 
   /**

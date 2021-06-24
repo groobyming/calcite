@@ -47,7 +47,7 @@ public class SqlTrainModel extends SqlCall {
 
   @Nonnull
   @Override public List<SqlNode> getOperandList() {
-    return ImmutableNullableList.of(subQuery);
+    return ImmutableNullableList.of(this.modelName, this.optionList, subQuery);
   }
 
 
@@ -59,7 +59,10 @@ public class SqlTrainModel extends SqlCall {
     writer.keyword("TRAIN");
     writer.keyword("MODEL");
     modelName.unparse(writer, leftPrec, rightPrec);
-    optionList.unparse(writer, leftPrec, rightPrec);
+    if (optionList != null) {
+      optionList.unparse(writer, leftPrec, rightPrec);
+    }
+
     //writer.keyword("FROM");
     subQuery.unparse(writer, leftPrec, rightPrec);
   }
@@ -67,5 +70,10 @@ public class SqlTrainModel extends SqlCall {
   public SqlIdentifier getModelName() {
     return this.modelName;
   }
+
+  public SqlSelect getSubQuery() {
+    return this.subQuery;
+  }
+
 }
 // End SqlTrainModel.java
