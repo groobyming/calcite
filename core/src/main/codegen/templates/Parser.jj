@@ -1840,8 +1840,10 @@ SqlNode SqlTrainModel():
     //<FROM>
     //tableName = CompoundIdentifier()
     {
-        //return new SqlTrainModel(s.end(this), modelName, optionList, subQuery);
-        return new SqlSelect(s.end(this), SqlNodeList.EMPTY, selectList, subQuery, null, null, null, null, null, null, null);
+        SqlSelect select = new SqlSelect(s.end(this), SqlNodeList.EMPTY, selectList, subQuery, null, null, null, null, null, null, null);
+        return new SqlTrainModel(s.end(this), modelName, optionList, select);
+
+        //return new SqlSelect(s.end(this), SqlNodeList.EMPTY, selectList, subQuery, null, null, null, null, null, null, null);
     }
 
 }
