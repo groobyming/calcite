@@ -176,6 +176,15 @@ public enum SqlKind {
    */
   ORDER_BY,
 
+  /**
+  * SORT BY clause.
+  *
+  * @see #DESCENDING
+  * @see #NULLS_FIRST
+  * @see #NULLS_LAST
+  */
+  SORT_BY,
+
   /** WITH clause. */
   WITH,
 
@@ -1231,11 +1240,12 @@ public enum SqlKind {
    * {@link #UNION},
    * {@link #VALUES},
    * {@link #ORDER_BY},
+   * {@link #SORT_BY},
    * {@link #EXPLICIT_TABLE}.
    */
   public static final EnumSet<SqlKind> QUERY =
       EnumSet.of(SELECT, UNION, INTERSECT, EXCEPT, VALUES, WITH, ORDER_BY,
-          EXPLICIT_TABLE);
+          SORT_BY, EXPLICIT_TABLE);
 
   /**
    * Category consisting of all expression operators.

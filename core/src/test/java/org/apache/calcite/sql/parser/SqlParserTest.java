@@ -2873,6 +2873,44 @@ public class SqlParserTest {
         "(?s).*Encountered \"offset\" at .*");
   }
 
+  @Test
+  public void testSort() {
+    check(
+        "select * from emp sort by empno, gender desc, deptno asc, empno asc, name desc",
+        "SELECT *\n"
+                + "FROM `EMP`\n"
+                + "SORT BY `EMPNO`, `GENDER` DESC, `DEPTNO`, `EMPNO`, `NAME` DESC");
+  }
+
+  @Test
+  public void testSortNullsFirst() {
+    check(
+        "select * from emp sort by gender desc nulls last, deptno asc nulls first, empno nulls last",
+        "SELECT *\n"
+                + "FROM `EMP`\n"
+                + "SORT BY `GENDER` DESC NULLS LAST, `DEPTNO` NULLS FIRST, `EMPNO` NULLS LAST");
+  }
+
+  @Test
+    public void testSortInternal() {
+    check(
+        "(select * from emp sort by empno) union select * from emp",
+        "((SELECT *\n"
+                + "FROM `EMP`\n"
+                + "SORT BY `EMPNO`)\n"
+                + "UNION\n"
+                + "SELECT *\n"
+                + "FROM `EMP`)");
+
+    check(
+        "select * from (select * from t sort by x, y) where a = b",
+        "SELECT *\n"
+                + "FROM (SELECT *\n"
+                + "FROM `T`\n"
+                + "SORT BY `X`, `Y`)\n"
+                + "WHERE (`A` = `B`)");
+  }
+
   /**
    * "LIMIT ... OFFSET ..." is the postgres equivalent of SQL:2008
    * "OFFSET ... FETCH". It all maps down to a parse tree that looks like

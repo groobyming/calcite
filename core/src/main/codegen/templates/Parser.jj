@@ -88,6 +88,7 @@ import org.apache.calcite.sql.SqlNodeList;
 import org.apache.calcite.sql.SqlNumericLiteral;
 import org.apache.calcite.sql.SqlOperator;
 import org.apache.calcite.sql.SqlOrderBy;
+import org.apache.calcite.sql.SqlSortBy;
 import org.apache.calcite.sql.SqlPostfixOperator;
 import org.apache.calcite.sql.SqlPrefixOperator;
 import org.apache.calcite.sql.SqlRowTypeNameSpec;
@@ -598,6 +599,7 @@ SqlNode OrderedQueryOrExpr(ExprContext exprContext) :
 {
     SqlNode e;
     SqlNodeList orderBy = null;
+    SqlNodeList sortBy = null;
     SqlNode start = null;
     SqlNode count = null;
 }
@@ -608,7 +610,11 @@ SqlNode OrderedQueryOrExpr(ExprContext exprContext) :
     [
         // use the syntactic type of the expression we just parsed
         // to decide whether ORDER BY makes sense
-        orderBy = OrderBy(e.isA(SqlKind.QUERY))
+        (
+         orderBy = OrderBy(e.isA(SqlKind.QUERY))
+        |
+         sortBy = SortBy(e.isA(SqlKind.QUERY))
+        )
     ]
     [
         // Postgres-style syntax. "LIMIT ... OFFSET ..."
@@ -641,12 +647,15 @@ SqlNode OrderedQueryOrExpr(ExprContext exprContext) :
         ( <ROW> | <ROWS> ) <ONLY>
     ]
     {
-        if (orderBy != null || start != null || count != null) {
-            if (orderBy == null) {
-                orderBy = SqlNodeList.EMPTY;
+        if (orderBy != null || sortBy != null || start != null || count != null) {
+            if (sortBy == null) {
+                if (orderBy == null) {
+                    orderBy = SqlNodeList.EMPTY;
+                }
+                e = new SqlOrderBy(getPos(), e, orderBy, start, count);
+            } else {
+                e = new SqlSortBy(getPos(), e, sortBy, start, count);
             }
-            e = new SqlOrderBy(getPos(), e, orderBy, start, count);
-
         }
         return e;
     }
@@ -3514,6 +3523,63 @@ SqlNodeList OrderBy(boolean accept) :
  * Parses one list item in an ORDER BY clause.
  */
 SqlNode OrderItem() :
+{
+    SqlNode e;
+}
+{
+    e = Expression(ExprContext.ACCEPT_SUB_QUERY)
+    (
+        <ASC>
+    |   <DESC> {
+            e = SqlStdOperatorTable.DESC.createCall(getPos(), e);
+        }
+    )?
+    (
+        LOOKAHEAD(2)
+        <NULLS> <FIRST> {
+            e = SqlStdOperatorTable.NULLS_FIRST.createCall(getPos(), e);
+        }
+    |
+        <NULLS> <LAST> {
+            e = SqlStdOperatorTable.NULLS_LAST.createCall(getPos(), e);
+        }
+    )?
+    {
+        return e;
+    }
+}
+
+/**
+ * Parses an SORT BY clause.
+ */
+SqlNodeList SortBy(boolean accept) :
+{
+    List<SqlNode> list;
+    SqlNode e;
+    final Span s;
+}
+{
+    <SORT> {
+        s = span();
+        if (!accept) {
+            throw SqlUtil.newContextException(s.pos(), RESOURCE.illegalOrderBy());
+        }
+    }
+    <BY> e = SortItem() {
+        list = startList(e);
+    }
+    (
+        LOOKAHEAD(2) <COMMA> e = SortItem() { list.add(e); }
+    )*
+    {
+        return new SqlNodeList(list, s.addAll(list).pos());
+    }
+}
+
+/**
+ * Parses one list item in an SORT BY clause.
+ */
+SqlNode SortItem() :
 {
     SqlNode e;
 }
@@ -8098,6 +8164,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < SKIP_: "SKIP" >
 |   < SMALLINT: "SMALLINT" >
 |   < SOME: "SOME" >
+|   < SORT: "SORT" >
 |   < SOURCE: "SOURCE" >
 |   < SPACE: "SPACE" >
 |   < SPECIFIC: "SPECIFIC" >
