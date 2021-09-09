@@ -122,6 +122,12 @@ public interface SqlWriter {
     ORDER_BY,
 
     /**
+     * SORT BY clause of a SELECT statement. The "list" has only two items:
+     * the query and the sort by clause, with SORT BY as the separator.
+     */
+    SORT_BY,
+
+    /**
      * ORDER BY list.
      *
      * <p>Example:</p>
@@ -130,6 +136,16 @@ public interface SqlWriter {
      * </ul>
      */
     ORDER_BY_LIST,
+
+    /**
+     * SORT BY list.
+     *
+     * <p>Example:</p>
+     * <ul>
+     * <li><code>SORT BY x, y DESC, z</code></li>
+     * </ul>
+     */
+    SORT_BY_LIST,
 
     /**
      * WITH clause of a SELECT statement. The "list" has only two items:
