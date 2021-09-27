@@ -27,7 +27,7 @@ limitations under the License.
   <groupId>com.tencent.bk.base.datalab</groupId>
   <artifactId>calcite</artifactId>
   <packaging>pom</packaging>
-  <version>1.21.0-bkbase.4-SNAPSHOT</version>
+  <version>1.21.0-bkbase.4</version>
 
   <!-- More project information. -->
   <name>Calcite</name>
