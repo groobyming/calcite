@@ -5245,8 +5245,9 @@ SqlNode ArrayConstructor() :
 /** Parses a MAP constructor */
 SqlNode MapConstructor() :
 {
-    SqlNodeList args;
-    SqlNode e;
+    SqlNodeList args = null;
+    SqlNode e = null;
+    boolean isMapQuery = false;
     final Span s;
 }
 {
@@ -5254,12 +5255,19 @@ SqlNode MapConstructor() :
     (
         LOOKAHEAD(1)
         <LPAREN>
-        // by sub query "MAP (SELECT empno, deptno FROM emp)"
-        e = LeafQueryOrExpr(ExprContext.ACCEPT_QUERY)
+        (
+            LOOKAHEAD(1)
+             <SELECT>
+            // by sub query "MAP (SELECT empno, deptno FROM emp)"
+            e = LeafQueryOrExpr(ExprContext.ACCEPT_QUERY)
+            { isMapQuery = true; }
+        |
+            args = ExpressionCommaList(s, ExprContext.ACCEPT_NON_QUERY)
+        )
         <RPAREN>
         {
-            return SqlStdOperatorTable.MAP_QUERY.createCall(
-                s.end(this), e);
+            return isMapQuery?SqlStdOperatorTable.MAP_QUERY.createCall(s.end(this), e)
+            :SqlStdOperatorTable.MAP_VALUE_CONSTRUCTOR.createCall( s.end(this), args.getList());
         }
     |
         // by enumeration "MAP[k0, v0, ..., kN, vN]"
