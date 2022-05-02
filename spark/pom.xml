@@ -20,12 +20,12 @@ limitations under the License.
   <parent>
     <groupId>com.tencent.bk.base.datalab</groupId>
     <artifactId>calcite</artifactId>
-    <version>1.21.0-bkbase.4</version>
+    <version>1.21.0-bkbase.5</version>
   </parent>
 
   <artifactId>calcite-spark</artifactId>
   <packaging>jar</packaging>
-  <version>1.21.0-bkbase.4</version>
+  <version>1.21.0-bkbase.5</version>
   <name>Calcite Spark</name>
 
   <properties>

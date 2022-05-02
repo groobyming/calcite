@@ -1515,7 +1515,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     source = SqlValidatorUtil.addAlias(source, UPDATE_SRC_ALIAS);
     SqlMerge mergeCall =
         new SqlMerge(updateCall.getParserPosition(), target, condition, source,
-            updateCall, null, null, updateCall.getAlias());
+            updateCall, null, null, updateCall.getAlias(), null);
     rewriteMerge(mergeCall);
     return mergeCall;
   }

@@ -40,6 +40,7 @@ public class SqlMerge extends SqlCall {
   SqlInsert insertCall;
   SqlSelect sourceSelect;
   SqlIdentifier alias;
+  SqlIdentifier deleteIdentifier;
 
   //~ Constructors -----------------------------------------------------------
 
@@ -50,7 +51,8 @@ public class SqlMerge extends SqlCall {
       SqlUpdate updateCall,
       SqlInsert insertCall,
       SqlSelect sourceSelect,
-      SqlIdentifier alias) {
+      SqlIdentifier alias,
+      SqlIdentifier deleteIdentifier) {
     super(pos);
     this.targetTable = targetTable;
     this.condition = condition;
@@ -59,6 +61,7 @@ public class SqlMerge extends SqlCall {
     this.insertCall = insertCall;
     this.sourceSelect = sourceSelect;
     this.alias = alias;
+    this.deleteIdentifier = deleteIdentifier;
   }
 
   //~ Methods ----------------------------------------------------------------
@@ -73,7 +76,7 @@ public class SqlMerge extends SqlCall {
 
   public List<SqlNode> getOperandList() {
     return ImmutableNullableList.of(targetTable, condition, source, updateCall,
-        insertCall, sourceSelect, alias);
+        insertCall, sourceSelect, alias, deleteIdentifier);
   }
 
   @Override public void setOperand(int i, SqlNode operand) {
@@ -100,6 +103,9 @@ public class SqlMerge extends SqlCall {
     case 6:
       alias = (SqlIdentifier) operand;
       break;
+    case 7:
+      deleteIdentifier = (SqlIdentifier) operand;
+      break;
     default:
       throw new AssertionError(i);
     }
@@ -117,6 +123,13 @@ public class SqlMerge extends SqlCall {
    */
   public SqlIdentifier getAlias() {
     return alias;
+  }
+
+  /**
+   * @return the delete-identifier for the target table of the merge
+   */
+  public SqlIdentifier getDeleteIdentifier() {
+    return deleteIdentifier;
   }
 
   /**
@@ -204,6 +217,12 @@ public class SqlMerge extends SqlCall {
         sourceExp.unparse(writer, opLeft, opRight);
       }
       writer.endList(setFrame);
+    }
+
+    if (deleteIdentifier != null) {
+      writer.newlineAndIndent();
+      writer.keyword("WHEN MATCHED THEN DELETE");
+      deleteIdentifier.unparse(writer, opLeft, opRight);
     }
 
     if (insertCall != null) {

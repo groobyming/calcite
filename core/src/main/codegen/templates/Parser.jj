@@ -2417,6 +2417,7 @@ SqlNode SqlMerge() :
     SqlNode condition;
     SqlUpdate updateCall = null;
     SqlInsert insertCall = null;
+    SqlIdentifier deleteIdentifier = null;
     final Span s;
 }
 {
@@ -2430,7 +2431,13 @@ SqlNode SqlMerge() :
     [ [ <AS> ] alias = SimpleIdentifier() ]
     <USING> sourceTableRef = TableRef()
     <ON> condition = Expression(ExprContext.ACCEPT_SUB_QUERY)
+
     (
+        LOOKAHEAD(4)
+        <WHEN> <MATCHED> <THEN> <DELETE>
+        { deleteIdentifier = SqlIdentifier.star(SqlParserPos.ZERO); }
+        [ insertCall = WhenNotMatchedClause(table) ]
+    |
         LOOKAHEAD(2)
         updateCall = WhenMatchedClause(table, alias)
         [ insertCall = WhenNotMatchedClause(table) ]
@@ -2439,7 +2446,7 @@ SqlNode SqlMerge() :
     )
     {
         return new SqlMerge(s.addIf(updateCall).addIf(insertCall).pos(), table,
-            condition, sourceTableRef, updateCall, insertCall, null, alias);
+            condition, sourceTableRef, updateCall, insertCall, null, alias, deleteIdentifier);
     }
 }
 
@@ -2494,10 +2501,18 @@ SqlInsert WhenNotMatchedClause(SqlNode table) :
         LOOKAHEAD(2)
         insertColumnList = ParenthesizedSimpleIdentifierList()
     ]
-    [ <LPAREN> ]
-    <VALUES> { valuesSpan = span(); }
-    rowConstructor = RowConstructor()
-    [ <RPAREN> ]
+    (
+        [ <LPAREN> ]
+        <VALUES> { valuesSpan = span(); }
+        rowConstructor = RowConstructor()
+        [ <RPAREN> ]
+    |
+        <STAR>
+        {
+            valuesSpan = span();
+            rowConstructor = SqlStdOperatorTable.ROW.createCall(SqlNodeList.EMPTY);
+        }
+    )
     {
         // TODO zfong 5/26/06: note that extra parentheses are accepted above
         // around the VALUES clause as a hack for unparse, but this is
