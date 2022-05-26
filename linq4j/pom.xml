@@ -113,7 +113,7 @@ limitations under the License.
         <version>1.6</version>
         <executions>
           <execution>
-            <id>27B59EF7777A67354829E6F423296DF5C906EAEC</id>
+            <id>BE58AC3A</id>
             <phase>verify</phase>
             <goals>
               <goal>sign</goal>
