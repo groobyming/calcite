@@ -251,6 +251,14 @@ public class ${parser.class} extends SqlAbstractParserImpl
         return SqlStdOperatorTable.EXTEND.createCall(
             Span.of(table, extendList).pos(), table, extendList);
     }
+
+    private TimeUnit warn(TimeUnit timeUnit) throws ParseException {
+        final String token = getToken(0).image.toUpperCase(Locale.ROOT);
+        warnings.add(
+            SqlUtil.newContextException(getPos(),
+                RESOURCE.nonStandardFeatureUsed(token)));
+        return timeUnit;
+    }
 }
 
 PARSER_END(${parser.class})
@@ -5333,73 +5341,124 @@ SqlLiteral IntervalLiteral() :
     }
 }
 
+TimeUnit Year() :
+{
+}
+{
+    <YEAR> { return TimeUnit.YEAR; }
+|
+    <YEARS> { return warn(TimeUnit.YEAR); }
+}
+
+TimeUnit Month() :
+{
+}
+{
+    <MONTH> { return TimeUnit.MONTH; }
+|
+    <MONTHS> { return warn(TimeUnit.MONTH); }
+}
+
+TimeUnit Day() :
+{
+}
+{
+    <DAY> { return TimeUnit.DAY; }
+|
+    <DAYS> { return warn(TimeUnit.DAY); }
+}
+
+TimeUnit Hour() :
+{
+}
+{
+    <HOUR> { return TimeUnit.HOUR; }
+|
+    <HOURS> { return warn(TimeUnit.HOUR); }
+}
+
+TimeUnit Minute() :
+{
+}
+{
+    <MINUTE> { return TimeUnit.MINUTE; }
+|
+    <MINUTES> { return warn(TimeUnit.MINUTE); }
+}
+
+TimeUnit Second() :
+{
+}
+{
+    <SECOND> { return TimeUnit.SECOND; }
+|
+    <SECONDS> { return warn(TimeUnit.SECOND); }
+}
+
 SqlIntervalQualifier IntervalQualifier() :
 {
-    TimeUnit start;
-    TimeUnit end = null;
-    int startPrec = RelDataType.PRECISION_NOT_SPECIFIED;
+    final Span s;
+    final TimeUnit start;
+    final TimeUnit end;
+    final int startPrec;
     int secondFracPrec = RelDataType.PRECISION_NOT_SPECIFIED;
 }
 {
     (
-        <YEAR> [ <LPAREN> startPrec = UnsignedIntLiteral() <RPAREN> ]
-        [
-            LOOKAHEAD(2) <TO> <MONTH>
-            {
-                end = TimeUnit.MONTH;
-            }
-        ]
-        { start = TimeUnit.YEAR; }
+        start = Year() { s = span(); } startPrec = PrecisionOpt()
+        (
+            LOOKAHEAD(2) <TO> end = Month()
+        |   { end = null; }
+        )
     |
-        <MONTH> [ <LPAREN> startPrec = UnsignedIntLiteral() <RPAREN> ]
-        { start = TimeUnit.MONTH; }
+        start = Month() { s = span(); } startPrec = PrecisionOpt()
+        { end = null; }
     |
-        <DAY> [ <LPAREN> startPrec = UnsignedIntLiteral() <RPAREN> ]
-        [ LOOKAHEAD(2) <TO>
+        start = Day() { s = span(); } startPrec = PrecisionOpt()
+        (
+            LOOKAHEAD(2) <TO>
             (
-                <HOUR> { end = TimeUnit.HOUR; }
+                end = Hour()
             |
-                <MINUTE> { end = TimeUnit.MINUTE; }
+                end = Minute()
             |
-                <SECOND> { end = TimeUnit.SECOND; }
+                end = Second() secondFracPrec = PrecisionOpt()
+            )
+        |   { end = null; }
+        )
+    |
+        start = Hour() { s = span(); } startPrec = PrecisionOpt()
+        (
+            LOOKAHEAD(2) <TO>
+            (
+                end = Minute()
+            |
+                end = Second()
                 [ <LPAREN> secondFracPrec = UnsignedIntLiteral() <RPAREN> ]
             )
-        ]
-        { start = TimeUnit.DAY; }
+        |   { end = null; }
+        )
     |
-        <HOUR> [ <LPAREN> startPrec = UnsignedIntLiteral() <RPAREN> ]
-        [ LOOKAHEAD(2) <TO>
-            (
-                <MINUTE> { end = TimeUnit.MINUTE; }
-            |
-                <SECOND> { end = TimeUnit.SECOND; }
-                [ <LPAREN> secondFracPrec = UnsignedIntLiteral() <RPAREN> ]
-            )
-        ]
-        { start = TimeUnit.HOUR; }
+        start = Minute() { s = span(); } startPrec = PrecisionOpt()
+        (
+            LOOKAHEAD(2) <TO>
+            end = Second()
+            [ <LPAREN> secondFracPrec = UnsignedIntLiteral() <RPAREN> ]
+        |   { end = null; }
+        )
     |
-        <MINUTE> [ <LPAREN> startPrec = UnsignedIntLiteral() <RPAREN> ]
-        [ LOOKAHEAD(2) <TO>
-            (
-                <SECOND> { end = TimeUnit.SECOND; }
-                [ <LPAREN> secondFracPrec = UnsignedIntLiteral() <RPAREN> ]
-            )
-        ]
-        { start = TimeUnit.MINUTE; }
-    |
-        <SECOND>
-        [   <LPAREN> startPrec = UnsignedIntLiteral()
+        start = Second() { s = span(); }
+        (
+            <LPAREN> startPrec = UnsignedIntLiteral()
             [ <COMMA> secondFracPrec = UnsignedIntLiteral() ]
             <RPAREN>
-        ]
-        { start = TimeUnit.SECOND; }
+        |   { startPrec = -1; }
+        )
+        { end = null; }
     )
     {
-        return new SqlIntervalQualifier(start,
-            startPrec,
-            end,
-            secondFracPrec,
-            getPos());
+        return new SqlIntervalQualifier(start, startPrec, end, secondFracPrec,
+            s.end(this));
     }
 }
 
@@ -7794,6 +7853,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < DATETIME_INTERVAL_CODE: "DATETIME_INTERVAL_CODE" >
 |   < DATETIME_INTERVAL_PRECISION: "DATETIME_INTERVAL_PRECISION" >
 |   < DAY: "DAY" >
+|   < DAYS: "DAYS" >
 |   < DEALLOCATE: "DEALLOCATE" >
 |   < DEC: "DEC" >
 |   < DECADE: "DECADE" >
@@ -7897,6 +7957,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < HIERARCHY: "HIERARCHY" >
 |   < HOLD: "HOLD" >
 |   < HOUR: "HOUR" >
+|   < HOURS: "HOURS" >
 |   < IDENTITY: "IDENTITY" >
 |   < INDEX: "INDEX" >
 |   < IF: "IF" >
@@ -7990,6 +8051,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < MILLENNIUM: "MILLENNIUM" >
 |   < MIN: "MIN" >
 |   < MINUTE: "MINUTE" >
+|   < MINUTES: "MINUTES" >
 |   < MINVALUE: "MINVALUE" >
 |   < MOD: "MOD" >
 |   < MODELS: "MODELS" >
@@ -7999,6 +8061,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < MODIFIES: "MODIFIES" >
 |   < MODULE: "MODULE" >
 |   < MONTH: "MONTH" >
+|   < MONTHS: "MONTHS" >
 |   < MORE_: "MORE" >
 |   < MULTISET: "MULTISET" >
 |   < MUMPS: "MUMPS" >
@@ -8157,6 +8220,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < SCROLL: "SCROLL" >
 |   < SEARCH: "SEARCH" >
 |   < SECOND: "SECOND" >
+|   < SECONDS: "SECONDS" >
 |   < SECTION: "SECTION" >
 |   < SECURITY: "SECURITY" >
 |   < SEEK: "SEEK" >
@@ -8347,6 +8411,7 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < WRITE: "WRITE" >
 |   < XML: "XML" >
 |   < YEAR: "YEAR" >
+|   < YEARS: "YEARS" >
 |   < ZONE: "ZONE" >
 <#-- additional parser keywords are included here -->
 <#list parser.keywords as keyword>
