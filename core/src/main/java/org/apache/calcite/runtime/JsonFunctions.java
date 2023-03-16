@@ -115,7 +115,7 @@ public class JsonFunctions {
     try {
       Matcher matcher = JSON_PATH_BASE.matcher(pathSpec);
       if (!matcher.matches()) {
-        throw RESOURCE.illegalJsonPathSpec(pathSpec).ex();
+        throw RESOURCE.illegalJsonPathSpec(pathSpec, Locale.getDefault()).ex();
       }
       PathMode mode = PathMode.valueOf(matcher.group(1).toUpperCase(Locale.ROOT));
       String pathWff = matcher.group(2);
@@ -145,7 +145,7 @@ public class JsonFunctions {
                 .build());
         break;
       default:
-        throw RESOURCE.illegalJsonPathModeInPathSpec(mode.toString(), pathSpec).ex();
+        throw RESOURCE.illegalJsonPathModeInPathSpec(mode.toString(), pathSpec, Locale.getDefault()).ex();
       }
       try {
         return JsonPathContext.withJavaObj(mode, ctx.read(pathWff));
@@ -193,7 +193,7 @@ public class JsonFunctions {
         return null;
       default:
         throw RESOURCE.illegalErrorBehaviorInJsonExistsFunc(
-            errorBehavior.toString()).ex();
+            errorBehavior.toString(), Locale.getDefault()).ex();
       }
     } else {
       return context.obj != null;
@@ -242,19 +242,19 @@ public class JsonFunctions {
           && !isScalarObject(value)) {
         switch (emptyBehavior) {
         case ERROR:
-          throw RESOURCE.emptyResultOfJsonValueFuncNotAllowed().ex();
+          throw RESOURCE.emptyResultOfJsonValueFuncNotAllowed(Locale.getDefault()).ex();
         case NULL:
           return null;
         case DEFAULT:
           return defaultValueOnEmpty;
         default:
           throw RESOURCE.illegalEmptyBehaviorInJsonValueFunc(
-              emptyBehavior.toString()).ex();
+              emptyBehavior.toString(), Locale.getDefault()).ex();
         }
       } else if (context.mode == PathMode.STRICT
           && !isScalarObject(value)) {
         exc = RESOURCE.scalarValueRequiredInStrictModeOfJsonValueFunc(
-            value.toString()).ex();
+            value.toString(), Locale.getDefault()).ex();
       } else {
         return value;
       }
@@ -268,7 +268,7 @@ public class JsonFunctions {
       return defaultValueOnError;
     default:
       throw RESOURCE.illegalErrorBehaviorInJsonValueFunc(
-          errorBehavior.toString()).ex();
+          errorBehavior.toString(), Locale.getDefault()).ex();
     }
   }
 
@@ -320,14 +320,14 @@ public class JsonFunctions {
           break;
         default:
           throw RESOURCE.illegalWrapperBehaviorInJsonQueryFunc(
-              wrapperBehavior.toString()).ex();
+              wrapperBehavior.toString(), Locale.getDefault()).ex();
         }
       }
       if (value == null || context.mode == PathMode.LAX
           && isScalarObject(value)) {
         switch (emptyBehavior) {
         case ERROR:
-          throw RESOURCE.emptyResultOfJsonQueryFuncNotAllowed().ex();
+          throw RESOURCE.emptyResultOfJsonQueryFuncNotAllowed(Locale.getDefault()).ex();
         case NULL:
           return null;
         case EMPTY_ARRAY:
@@ -336,11 +336,11 @@ public class JsonFunctions {
           return "{}";
         default:
           throw RESOURCE.illegalEmptyBehaviorInJsonQueryFunc(
-              emptyBehavior.toString()).ex();
+              emptyBehavior.toString(), Locale.getDefault()).ex();
         }
       } else if (context.mode == PathMode.STRICT && isScalarObject(value)) {
         exc = RESOURCE.arrayOrObjectValueRequiredInStrictModeOfJsonQueryFunc(
-            value.toString()).ex();
+            value.toString(), Locale.getDefault()).ex();
       } else {
         try {
           return jsonize(value);
@@ -360,7 +360,7 @@ public class JsonFunctions {
       return "{}";
     default:
       throw RESOURCE.illegalErrorBehaviorInJsonQueryFunc(
-          errorBehavior.toString()).ex();
+          errorBehavior.toString(), Locale.getDefault()).ex();
     }
   }
 
@@ -372,7 +372,7 @@ public class JsonFunctions {
       String k = (String) kvs[i];
       Object v = kvs[i + 1];
       if (k == null) {
-        throw RESOURCE.nullKeyOfJsonObjectNotAllowed().ex();
+        throw RESOURCE.nullKeyOfJsonObjectNotAllowed(Locale.getDefault()).ex();
       }
       if (v == null) {
         if (nullClause == SqlJsonConstructorNullClause.NULL_ON_NULL) {
@@ -388,7 +388,7 @@ public class JsonFunctions {
   public static void jsonObjectAggAdd(Map map, String k, Object v,
       SqlJsonConstructorNullClause nullClause) {
     if (k == null) {
-      throw RESOURCE.nullKeyOfJsonObjectNotAllowed().ex();
+      throw RESOURCE.nullKeyOfJsonObjectNotAllowed(Locale.getDefault()).ex();
     }
     if (v == null) {
       if (nullClause == SqlJsonConstructorNullClause.NULL_ON_NULL) {
@@ -434,7 +434,7 @@ public class JsonFunctions {
       return JSON_PATH_JSON_PROVIDER.getObjectMapper().writer(JSON_PRETTY_PRINTER)
           .writeValueAsString(input.obj);
     } catch (Exception e) {
-      throw RESOURCE.exceptionWhileSerializingToJson(Objects.toString(input.obj)).ex();
+      throw RESOURCE.exceptionWhileSerializingToJson(Objects.toString(input.obj), Locale.getDefault()).ex();
     }
   }
 
@@ -467,11 +467,11 @@ public class JsonFunctions {
       } else if (val == null) {
         result = "NULL";
       } else {
-        throw RESOURCE.invalidInputForJsonType(val.toString()).ex();
+        throw RESOURCE.invalidInputForJsonType(val.toString(), Locale.getDefault()).ex();
       }
       return result;
     } catch (Exception ex) {
-      throw RESOURCE.invalidInputForJsonType(val.toString()).ex();
+      throw RESOURCE.invalidInputForJsonType(val.toString(), Locale.getDefault()).ex();
     }
   }
 
@@ -490,7 +490,7 @@ public class JsonFunctions {
       }
       return result;
     } catch (Exception ex) {
-      throw RESOURCE.invalidInputForJsonDepth(o.toString()).ex();
+      throw RESOURCE.invalidInputForJsonDepth(o.toString(), Locale.getDefault()).ex();
     }
   }
 
@@ -561,7 +561,7 @@ public class JsonFunctions {
       }
     } catch (Exception ex) {
       throw RESOURCE.invalidInputForJsonLength(
-          context.toString()).ex();
+          context.toString(), Locale.getDefault()).ex();
     }
     return result;
   }
@@ -601,7 +601,7 @@ public class JsonFunctions {
       }
     } catch (Exception ex) {
       throw RESOURCE.invalidInputForJsonKeys(
-          context.toString()).ex();
+          context.toString(), Locale.getDefault()).ex();
     }
     return jsonize(list);
   }
@@ -627,7 +627,7 @@ public class JsonFunctions {
       return ctx.jsonString();
     } catch (Exception ex) {
       throw RESOURCE.invalidInputForJsonRemove(
-          input.toString(), Arrays.toString(pathSpecs)).ex();
+          input.toString(), Arrays.toString(pathSpecs), Locale.getDefault()).ex();
     }
   }
 
@@ -640,7 +640,7 @@ public class JsonFunctions {
       return JSON_PATH_JSON_PROVIDER.getObjectMapper()
           .writeValueAsBytes(input.obj).length;
     } catch (Exception e) {
-      throw RESOURCE.invalidInputForJsonStorageSize(Objects.toString(input.obj)).ex();
+      throw RESOURCE.invalidInputForJsonStorageSize(Objects.toString(input.obj), Locale.getDefault()).ex();
     }
   }
 
@@ -717,10 +717,10 @@ public class JsonFunctions {
 
     public static JsonPathContext withJavaObj(PathMode mode, Object obj) {
       if (mode == PathMode.UNKNOWN) {
-        throw RESOURCE.illegalJsonPathMode(mode.toString()).ex();
+        throw RESOURCE.illegalJsonPathMode(mode.toString(), Locale.getDefault()).ex();
       }
       if (mode == PathMode.STRICT && obj == null) {
-        throw RESOURCE.strictPathModeRequiresNonEmptyValue().ex();
+        throw RESOURCE.strictPathModeRequiresNonEmptyValue(Locale.getDefault()).ex();
       }
       return new JsonPathContext(mode, obj, null);
     }

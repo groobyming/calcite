@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.sql.SqlIdentifier;
@@ -82,7 +83,7 @@ public class OrderByScope extends DelegatingScope {
       if (aliasCount > 1) {
         // More than one column has this alias.
         throw validator.newValidationError(identifier,
-            RESOURCE.columnAmbiguous(name));
+            RESOURCE.columnAmbiguous(name, Locale.getDefault()));
       }
       if (field != null && !field.isDynamicStar() && aliasCount == 1) {
         // if identifier is resolved to a dynamic star, use super.fullyQualify() for such case.

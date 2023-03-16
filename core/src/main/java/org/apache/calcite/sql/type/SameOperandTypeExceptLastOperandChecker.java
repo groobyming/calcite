@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCallBinding;
 import org.apache.calcite.sql.SqlOperator;
@@ -66,7 +67,7 @@ public class SameOperandTypeExceptLastOperandChecker extends SameOperandTypeChec
               .createSqlType(SqlTypeName.NULL);
         } else if (throwOnFailure) {
           throw callBinding.getValidator().newValidationError(
-              callBinding.operand(i), RESOURCE.nullIllegal());
+              callBinding.operand(i), RESOURCE.nullIllegal(Locale.getDefault()));
         } else {
           return false;
         }
@@ -86,7 +87,7 @@ public class SameOperandTypeExceptLastOperandChecker extends SameOperandTypeChec
           // newValidationSignatureError() here?  It gives more
           // specific diagnostics.
           throw callBinding.newValidationError(
-              RESOURCE.needSameTypeParameter());
+              RESOURCE.needSameTypeParameter(Locale.getDefault()));
         }
       }
       prev = i;

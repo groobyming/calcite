@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCallBinding;
 import org.apache.calcite.sql.SqlNode;
@@ -99,7 +100,7 @@ public class SameOperandTypeChecker implements SqlSingleOperandTypeChecker {
           // newValidationSignatureError() here?  It gives more
           // specific diagnostics.
           throw callBinding.newValidationError(
-              RESOURCE.needSameTypeParameter());
+              RESOURCE.needSameTypeParameter(Locale.getDefault()));
         }
       }
       prev = i;

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -63,17 +64,17 @@ public class SqlMapValueConstructor extends SqlMultisetValueConstructor {
             callBinding.getScope(),
             callBinding.operands());
     if (argTypes.size() == 0) {
-      throw callBinding.newValidationError(RESOURCE.mapRequiresTwoOrMoreArgs());
+      throw callBinding.newValidationError(RESOURCE.mapRequiresTwoOrMoreArgs(Locale.getDefault()));
     }
     if (argTypes.size() % 2 > 0) {
-      throw callBinding.newValidationError(RESOURCE.mapRequiresEvenArgCount());
+      throw callBinding.newValidationError(RESOURCE.mapRequiresEvenArgCount(Locale.getDefault()));
     }
     final Pair<RelDataType, RelDataType> componentType =
         getComponentTypes(
             callBinding.getTypeFactory(), argTypes);
     if (null == componentType.left || null == componentType.right) {
       if (throwOnFailure) {
-        throw callBinding.newValidationError(RESOURCE.needSameTypeParameter());
+        throw callBinding.newValidationError(RESOURCE.needSameTypeParameter(Locale.getDefault()));
       }
       return false;
     }

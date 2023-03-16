@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.plan;
 
+import java.util.Locale;
 import org.apache.calcite.plan.volcano.RelSubset;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.metadata.RelMetadataProvider;
@@ -118,7 +119,7 @@ public abstract class AbstractRelOptPlanner implements RelOptPlanner {
    */
   public void checkCancel() {
     if (cancelFlag.get()) {
-      throw RESOURCE.preparationAborted().ex();
+      throw RESOURCE.preparationAborted(Locale.getDefault()).ex();
     }
   }
 

@@ -151,7 +151,7 @@ public final class SqlParserUtil {
     if (cal == null) {
       throw SqlUtil.newContextException(pos,
           RESOURCE.illegalLiteral("DATE", s,
-              RESOURCE.badFormat(DateTimeUtils.DATE_FORMAT_STRING).str()));
+              RESOURCE.badFormat(DateTimeUtils.DATE_FORMAT_STRING, Locale.getDefault()).str(), Locale.getDefault()));
     }
     final DateString d = DateString.fromCalendarFields(cal);
     return SqlLiteral.createDate(d, pos);
@@ -165,7 +165,7 @@ public final class SqlParserUtil {
     if (pt == null) {
       throw SqlUtil.newContextException(pos,
           RESOURCE.illegalLiteral("TIME", s,
-              RESOURCE.badFormat(DateTimeUtils.TIME_FORMAT_STRING).str()));
+              RESOURCE.badFormat(DateTimeUtils.TIME_FORMAT_STRING, Locale.getDefault()).str(), Locale.getDefault()));
     }
     final TimeString t = TimeString.fromCalendarFields(pt.getCalendar())
         .withFraction(pt.getFraction());
@@ -190,7 +190,7 @@ public final class SqlParserUtil {
     if (pt == null) {
       throw SqlUtil.newContextException(pos,
           RESOURCE.illegalLiteral("TIMESTAMP", s,
-              RESOURCE.badFormat(DateTimeUtils.TIMESTAMP_FORMAT_STRING).str()));
+              RESOURCE.badFormat(DateTimeUtils.TIMESTAMP_FORMAT_STRING, Locale.getDefault()).str(), Locale.getDefault()));
     }
     final TimestampString ts =
         TimestampString.fromCalendarFields(pt.getCalendar())
@@ -212,7 +212,7 @@ public final class SqlParserUtil {
     if (intervalStr.equals("")) {
       throw SqlUtil.newContextException(pos,
           RESOURCE.illegalIntervalLiteral(s + " "
-              + intervalQualifier.toString(), pos.toString()));
+              + intervalQualifier.toString(), pos.toString(), Locale.getDefault()));
     }
     return SqlLiteral.createInterval(sign, intervalStr, intervalQualifier, pos);
   }
@@ -585,7 +585,7 @@ public final class SqlParserUtil {
     } else if (3 == localeParts.length) {
       locale = new Locale(localeParts[0], localeParts[1], localeParts[2]);
     } else {
-      throw RESOURCE.illegalLocaleFormat(localeStr).ex();
+      throw RESOURCE.illegalLocaleFormat(localeStr, Locale.getDefault()).ex();
     }
     return new ParsedCollation(charset, locale, strength);
   }
@@ -730,7 +730,7 @@ public final class SqlParserUtil {
    */
   public static char checkUnicodeEscapeChar(String s) {
     if (s.length() != 1) {
-      throw RESOURCE.unicodeEscapeCharLength(s).ex();
+      throw RESOURCE.unicodeEscapeCharLength(s, Locale.getDefault()).ex();
     }
     char c = s.charAt(0);
     if (Character.isDigit(c)
@@ -739,7 +739,7 @@ public final class SqlParserUtil {
         || (c == '"')
         || ((c >= 'a') && (c <= 'f'))
         || ((c >= 'A') && (c <= 'F'))) {
-      throw RESOURCE.unicodeEscapeCharIllegal(s).ex();
+      throw RESOURCE.unicodeEscapeCharIllegal(s, Locale.getDefault()).ex();
     }
     return c;
   }

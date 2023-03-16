@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.schema.impl;
 
+import java.util.Locale;
 import org.apache.calcite.adapter.enumerable.AggImplementor;
 import org.apache.calcite.adapter.enumerable.RexImpTable;
 import org.apache.calcite.rel.type.RelDataType;
@@ -98,7 +99,7 @@ public class AggregateFunctionImpl implements AggregateFunction,
       final List<Class> addParamTypes =
           ImmutableList.copyOf((Class[]) addMethod.getParameterTypes());
       if (addParamTypes.isEmpty() || addParamTypes.get(0) != accumulatorType) {
-        throw RESOURCE.firstParameterOfAdd(clazz.getName()).ex();
+        throw RESOURCE.firstParameterOfAdd(clazz.getName(), Locale.getDefault()).ex();
       }
       final ReflectiveFunctionBase.ParameterListBuilder params =
           ReflectiveFunctionBase.builder();

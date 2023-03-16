@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
 import org.apache.calcite.jdbc.CalcitePrepare;
 import org.apache.calcite.jdbc.CalciteSchema;
@@ -132,7 +133,7 @@ public class SqlCreateTable extends SqlCreate
       if (columnList != null
           && queryRowType.getFieldCount() != columnList.size()) {
         throw SqlUtil.newContextException(columnList.getParserPosition(),
-            RESOURCE.columnCountMismatch());
+            RESOURCE.columnCountMismatch(Locale.getDefault()));
       }
     } else {
       queryRowType = null;
@@ -145,7 +146,7 @@ public class SqlCreateTable extends SqlCreate
         // "CREATE TABLE t" is invalid; because there is no "AS query" we need
         // a list of column names and types, "CREATE TABLE t (INT c)".
         throw SqlUtil.newContextException(name.getParserPosition(),
-            RESOURCE.createTableRequiresColumnList());
+            RESOURCE.createTableRequiresColumnList(Locale.getDefault()));
       }
       columnList = new ArrayList<>();
       for (String name : queryRowType.getFieldNames()) {
@@ -171,7 +172,7 @@ public class SqlCreateTable extends SqlCreate
         final SqlIdentifier id = (SqlIdentifier) c.e;
         if (queryRowType == null) {
           throw SqlUtil.newContextException(id.getParserPosition(),
-              RESOURCE.createTableRequiresColumnTypes(id.getSimple()));
+              RESOURCE.createTableRequiresColumnTypes(id.getSimple(), Locale.getDefault()));
         }
         final RelDataTypeField f = queryRowType.getFieldList().get(c.i);
         final ColumnStrategy strategy = f.getType().isNullable()
@@ -208,7 +209,7 @@ public class SqlCreateTable extends SqlCreate
       if (!ifNotExists) {
         // They did not specify IF NOT EXISTS, so give error.
         throw SqlUtil.newContextException(name.getParserPosition(),
-            RESOURCE.tableExists(pair.right));
+            RESOURCE.tableExists(pair.right, Locale.getDefault()));
       }
       return;
     }

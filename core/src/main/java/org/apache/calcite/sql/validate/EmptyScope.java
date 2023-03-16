@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.plan.RelOptSchema;
 import org.apache.calcite.prepare.Prepare;
@@ -201,7 +202,7 @@ class EmptyScope implements SqlValidatorScope {
   public Pair<String, SqlValidatorNamespace> findQualifyingTableName(
       String columnName, SqlNode ctx) {
     throw validator.newValidationError(ctx,
-        RESOURCE.columnNotFound(columnName));
+        RESOURCE.columnNotFound(columnName, Locale.getDefault()));
   }
 
   public Map<String, ScopeChild> findQualifyingTableNames(String columnName,

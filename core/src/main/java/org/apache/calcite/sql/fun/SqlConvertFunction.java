@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFamily;
 import org.apache.calcite.sql.SqlCall;
@@ -127,7 +128,7 @@ public class SqlConvertFunction extends SqlFunction {
       if (throwOnFailure) {
         throw callBinding.newError(
             RESOURCE.cannotCastValue(validatedNodeType.toString(),
-                returnType.toString()));
+                returnType.toString(), Locale.getDefault()));
       }
       return false;
     }
@@ -139,7 +140,7 @@ public class SqlConvertFunction extends SqlFunction {
         // set mismatch.
         throw callBinding.newError(
             RESOURCE.cannotCastValue(validatedNodeType.getFullTypeString(),
-                returnType.getFullTypeString()));
+                returnType.getFullTypeString(), Locale.getDefault()));
       }
       return false;
     }

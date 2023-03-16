@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlBinaryOperator;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -76,7 +77,7 @@ public class SqlMultisetMemberOfOperator extends SqlBinaryOperator {
     if (t0.getFamily() != t1.getFamily()) {
       if (throwOnFailure) {
         throw callBinding.newValidationError(
-            RESOURCE.typeNotComparableNear(t0.toString(), t1.toString()));
+            RESOURCE.typeNotComparableNear(t0.toString(), t1.toString(), Locale.getDefault()));
       }
       return false;
     }

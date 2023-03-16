@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlFunction;
 import org.apache.calcite.sql.SqlFunctionCategory;
@@ -73,7 +74,7 @@ public class SqlAbstractTimeFunction extends SqlFunction {
       throw opBinding.newError(
           RESOURCE.argumentMustBeValidPrecision(
               opBinding.getOperator().getName(), 0,
-              SqlTypeName.MAX_DATETIME_PRECISION));
+              SqlTypeName.MAX_DATETIME_PRECISION, Locale.getDefault()));
     }
     return opBinding.getTypeFactory().createSqlType(typeName, precision);
   }

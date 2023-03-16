@@ -64,7 +64,7 @@ public class NlsString implements Comparable<NlsString>, Cloneable {
                     throw RESOURCE.charsetEncoding(
                         //CHECKSTYLE: IGNORE 1
                         new String(bytes, Charset.defaultCharset()),
-                        charset.name()).ex();
+                        charset.name(), Locale.getDefault()).ex();
                   }
                 }
               });
@@ -138,7 +138,7 @@ public class NlsString implements Comparable<NlsString>, Cloneable {
           && (this.charsetName.equals("LATIN1")
           || this.charsetName.equals("ISO-8859-1"))) {
         if (!charset.newEncoder().canEncode(stringValue)) {
-          throw RESOURCE.charsetEncoding(stringValue, charset.name()).ex();
+          throw RESOURCE.charsetEncoding(stringValue, charset.name(), Locale.getDefault()).ex();
         }
       }
     }

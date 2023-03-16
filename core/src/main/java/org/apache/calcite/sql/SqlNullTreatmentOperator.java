@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
 import org.apache.calcite.sql.validate.SqlValidator;
@@ -59,7 +60,7 @@ public class SqlNullTreatmentOperator extends SqlSpecialOperator {
     if (!aggCall.getOperator().isAggregator()
         || !((SqlAggFunction) aggCall.getOperator()).allowsNullTreatment()) {
       throw validator.newValidationError(aggCall,
-          RESOURCE.disallowsNullTreatment(aggCall.getOperator().getName()));
+          RESOURCE.disallowsNullTreatment(aggCall.getOperator().getName(), Locale.getDefault()));
     }
   }
 }

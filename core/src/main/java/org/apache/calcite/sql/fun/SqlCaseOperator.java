@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.sql.SqlCall;
@@ -183,7 +184,7 @@ public class SqlCaseOperator extends SqlOperator {
               node);
       if (!SqlTypeUtil.inBooleanFamily(type)) {
         if (throwOnFailure) {
-          throw callBinding.newError(RESOURCE.expectedBoolean());
+          throw callBinding.newError(RESOURCE.expectedBoolean(Locale.getDefault()));
         }
         return false;
       }
@@ -206,7 +207,7 @@ public class SqlCaseOperator extends SqlOperator {
       // according to the sql standard we can not have all of the THEN
       // statements and the ELSE returning null
       if (throwOnFailure && !callBinding.getValidator().isTypeCoercionEnabled()) {
-        throw callBinding.newError(RESOURCE.mustNotNullInElse());
+        throw callBinding.newError(RESOURCE.mustNotNullInElse(Locale.getDefault()));
       }
       return false;
     }
@@ -265,7 +266,7 @@ public class SqlCaseOperator extends SqlOperator {
         }
       }
       if (!coerced) {
-        throw callBinding.newValidationError(RESOURCE.illegalMixingOfTypes());
+        throw callBinding.newValidationError(RESOURCE.illegalMixingOfTypes(Locale.getDefault()));
       }
     }
     final SqlValidatorImpl validator =

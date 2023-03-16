@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -81,7 +82,7 @@ public class SetopOperandTypeChecker implements SqlOperandTypeChecker {
           }
           throw validator.newValidationError(node,
               RESOURCE.columnCountMismatchInSetop(
-                  callBinding.getOperator().getName()));
+                  callBinding.getOperator().getName(), Locale.getDefault()));
         } else {
           return false;
         }
@@ -132,7 +133,7 @@ public class SetopOperandTypeChecker implements SqlOperandTypeChecker {
                 SqlUtil.getSelectListItem(callBinding.operand(0), i);
             throw validator.newValidationError(field,
                 RESOURCE.columnTypeMismatchInSetop(i + 1, // 1-based
-                    callBinding.getOperator().getName()));
+                    callBinding.getOperator().getName(), Locale.getDefault()));
           } else {
             return false;
           }

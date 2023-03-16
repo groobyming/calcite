@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.prepare.Prepare;
 import org.apache.calcite.rel.type.DynamicRecordType;
 import org.apache.calcite.rel.type.RelDataType;
@@ -253,18 +254,18 @@ public abstract class DelegatingScope implements SqlValidatorScope {
             Collections.sort(list);
             throw validator.newValidationError(identifier,
                 RESOURCE.columnNotFoundDidYouMean(columnName,
-                    Util.sepList(list, "', '")));
+                    Util.sepList(list, "', '"), Locale.getDefault()));
           }
         }
         throw validator.newValidationError(identifier,
-            RESOURCE.columnNotFound(columnName));
+            RESOURCE.columnNotFound(columnName, Locale.getDefault()));
       case 1:
         tableName = map.keySet().iterator().next();
         namespace = map.get(tableName).namespace;
         break;
       default:
         throw validator.newValidationError(identifier,
-            RESOURCE.columnAmbiguous(columnName));
+            RESOURCE.columnAmbiguous(columnName, Locale.getDefault()));
       }
 
       final ResolvedImpl resolved = new ResolvedImpl();
@@ -276,7 +277,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
         if (hasAmbiguousField(namespace.getRowType(), field,
             columnName, nameMatcher)) {
           throw validator.newValidationError(identifier,
-              RESOURCE.columnAmbiguous(columnName));
+              RESOURCE.columnAmbiguous(columnName, Locale.getDefault()));
         }
 
         columnName = field.getName(); // use resolved field name
@@ -315,7 +316,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
             final Step lastStep = Util.last(resolved.only().path.steps());
             throw validator.newValidationError(prefix,
                 RESOURCE.tableNameNotFoundDidYouMean(prefix.toString(),
-                    lastStep.name));
+                    lastStep.name, Locale.getDefault()));
           }
         }
       }
@@ -328,7 +329,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
         default:
           final SqlIdentifier prefix1 = identifier.skipLast(1);
           throw validator.newValidationError(prefix1,
-              RESOURCE.tableNameNotFound(prefix1.toString()));
+              RESOURCE.tableNameNotFound(prefix1.toString(), Locale.getDefault()));
         case 1: {
           final Map.Entry<String, ScopeChild> entry =
               map.entrySet().iterator().next();
@@ -368,7 +369,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
               // standard requirement that record fields are qualified by table alias.
               final SqlIdentifier prefix = identifier.skipLast(1);
               throw validator.newValidationError(prefix,
-                  RESOURCE.tableNameNotFound(prefix.toString()));
+                  RESOURCE.tableNameNotFound(prefix.toString(), Locale.getDefault()));
             }
           }
         }
@@ -418,7 +419,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
             final Step step = Util.last(resolved.resolves.get(0).path.steps());
             throw validator.newValidationError(suffix3,
                 RESOURCE.columnNotFoundInTableDidYouMean(suffix3.toString(),
-                    prefix.toString(), step.name));
+                    prefix.toString(), step.name, Locale.getDefault()));
           }
         }
         // Find the shortest suffix that also fails. Suppose we cannot resolve
@@ -437,7 +438,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
         final SqlIdentifier prefix = identifier.getComponent(0, i);
         final SqlIdentifier suffix3 = identifier.getComponent(i, k + 1);
         throw validator.newValidationError(suffix3,
-            RESOURCE.columnNotFoundInTable(suffix3.toString(), prefix.toString()));
+            RESOURCE.columnNotFoundInTable(suffix3.toString(), prefix.toString(), Locale.getDefault()));
       case 1:
         path = resolved.only().path;
         break;
@@ -465,7 +466,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
         resolved.resolves.sort(c);
         if (c.compare(resolved.resolves.get(0), resolved.resolves.get(1)) == 0) {
           throw validator.newValidationError(suffix,
-              RESOURCE.columnAmbiguous(suffix.toString()));
+              RESOURCE.columnAmbiguous(suffix.toString(), Locale.getDefault()));
         }
         path = resolved.resolves.get(0).path;
       }
@@ -477,7 +478,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
         final String name = identifier.names.get(k);
         if (step.i < 0) {
           throw validator.newValidationError(
-              identifier, RESOURCE.columnNotFound(name));
+              identifier, RESOURCE.columnNotFound(name, Locale.getDefault()));
         }
         final RelDataTypeField field0 =
             step.rowType.getFieldList().get(step.i);
@@ -494,7 +495,7 @@ public abstract class DelegatingScope implements SqlValidatorScope {
           }
           if (hasAmbiguousField(step.rowType, field0, name, nameMatcher)) {
             throw validator.newValidationError(identifier,
-                RESOURCE.columnAmbiguous(name));
+                RESOURCE.columnAmbiguous(name, Locale.getDefault()));
           }
         }
         ++k;

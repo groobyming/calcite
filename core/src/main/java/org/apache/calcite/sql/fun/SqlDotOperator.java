@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeField;
@@ -99,7 +100,7 @@ public class SqlDotOperator extends SqlSpecialOperator {
     assert nodeType != null;
     if (!nodeType.isStruct()) {
       throw SqlUtil.newContextException(operand.getParserPosition(),
-          Static.RESOURCE.incompatibleTypes());
+          Static.RESOURCE.incompatibleTypes(Locale.getDefault()));
     }
 
     final SqlNode fieldId = call.operand(1);
@@ -108,7 +109,7 @@ public class SqlDotOperator extends SqlSpecialOperator {
         nodeType.getField(fieldName, false, false);
     if (field == null) {
       throw SqlUtil.newContextException(fieldId.getParserPosition(),
-          Static.RESOURCE.unknownField(fieldName));
+          Static.RESOURCE.unknownField(fieldName, Locale.getDefault()));
     }
     RelDataType type = field.getType();
 

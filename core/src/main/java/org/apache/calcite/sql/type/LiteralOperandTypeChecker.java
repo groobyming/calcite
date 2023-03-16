@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.sql.SqlCallBinding;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.SqlOperandCountRange;
@@ -62,7 +63,7 @@ public class LiteralOperandTypeChecker implements SqlSingleOperandTypeChecker {
       if (throwOnFailure) {
         throw callBinding.newError(
             RESOURCE.argumentMustNotBeNull(
-                callBinding.getOperator().getName()));
+                callBinding.getOperator().getName(), Locale.getDefault()));
       }
       return false;
     }
@@ -70,7 +71,7 @@ public class LiteralOperandTypeChecker implements SqlSingleOperandTypeChecker {
       if (throwOnFailure) {
         throw callBinding.newError(
             RESOURCE.argumentMustBeLiteral(
-                callBinding.getOperator().getName()));
+                callBinding.getOperator().getName(), Locale.getDefault()));
       }
       return false;
     }

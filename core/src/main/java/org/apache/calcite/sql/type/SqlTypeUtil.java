@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeFamily;
@@ -128,7 +129,7 @@ public abstract class SqlTypeUtil {
           }
           msg += operands.get(i).toString();
         }
-        throw binding.newError(RESOURCE.operandNotComparable(msg));
+        throw binding.newError(RESOURCE.operandNotComparable(msg, Locale.getDefault()));
       }
       return false;
     }

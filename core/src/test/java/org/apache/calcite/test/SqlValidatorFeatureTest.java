@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.test;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.runtime.CalciteContextException;
 import org.apache.calcite.runtime.CalciteException;
@@ -61,13 +62,13 @@ public class SqlValidatorFeatureTest extends SqlValidatorTestCase {
   @Test public void testDistinct() {
     checkFeature(
         "select ^distinct^ name from dept",
-        RESOURCE.sQLFeature_E051_01());
+        RESOURCE.sQLFeature_E051_01(Locale.getDefault()));
   }
 
   @Test public void testOrderByDesc() {
     checkFeature(
         "select name from dept order by ^name desc^",
-        RESOURCE.sQLConformance_OrderByDesc());
+        RESOURCE.sQLConformance_OrderByDesc(Locale.getDefault()));
   }
 
   // NOTE jvs 6-Mar-2006:  carets don't come out properly placed
@@ -76,33 +77,33 @@ public class SqlValidatorFeatureTest extends SqlValidatorTestCase {
   @Test public void testIntersect() {
     checkFeature(
         "^select name from dept intersect select name from dept^",
-        RESOURCE.sQLFeature_F302());
+        RESOURCE.sQLFeature_F302(Locale.getDefault()));
   }
 
   @Test public void testExcept() {
     checkFeature(
         "^select name from dept except select name from dept^",
-        RESOURCE.sQLFeature_E071_03());
+        RESOURCE.sQLFeature_E071_03(Locale.getDefault()));
   }
 
   @Test public void testMultiset() {
     checkFeature(
         "values ^multiset[1]^",
-        RESOURCE.sQLFeature_S271());
+        RESOURCE.sQLFeature_S271(Locale.getDefault()));
 
     checkFeature(
         "values ^multiset(select * from dept)^",
-        RESOURCE.sQLFeature_S271());
+        RESOURCE.sQLFeature_S271(Locale.getDefault()));
   }
 
   @Test public void testTablesample() {
     checkFeature(
         "select name from ^dept tablesample bernoulli(50)^",
-        RESOURCE.sQLFeature_T613());
+        RESOURCE.sQLFeature_T613(Locale.getDefault()));
 
     checkFeature(
         "select name from ^dept tablesample substitute('sample_dept')^",
-        RESOURCE.sQLFeatureExt_T613_Substitution());
+        RESOURCE.sQLFeatureExt_T613_Substitution(Locale.getDefault()));
   }
 
   private void checkFeature(String sql, Feature feature) {

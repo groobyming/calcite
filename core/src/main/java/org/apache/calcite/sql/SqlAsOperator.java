@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.type.InferTypes;
 import org.apache.calcite.sql.type.OperandTypes;
@@ -107,7 +108,7 @@ public class SqlAsOperator extends SqlSpecialOperator {
     SqlIdentifier id = (SqlIdentifier) operands.get(1);
     if (!id.isSimple()) {
       throw validator.newValidationError(id,
-          RESOURCE.aliasMustBeSimpleIdentifier());
+          RESOURCE.aliasMustBeSimpleIdentifier(Locale.getDefault()));
     }
   }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.avatica.util.TimeUnitRange;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
@@ -624,7 +625,7 @@ public class SqlLiteral extends SqlNode {
           return bd.intValueExact();
         } catch (ArithmeticException e) {
           throw SqlUtil.newContextException(getParserPosition(),
-              RESOURCE.numberLiteralOutOfRange(bd.toString()));
+              RESOURCE.numberLiteralOutOfRange(bd.toString(), Locale.getDefault()));
         }
       } else {
         return bd.intValue();
@@ -652,7 +653,7 @@ public class SqlLiteral extends SqlNode {
           return bd.longValueExact();
         } catch (ArithmeticException e) {
           throw SqlUtil.newContextException(getParserPosition(),
-              RESOURCE.numberLiteralOutOfRange(bd.toString()));
+              RESOURCE.numberLiteralOutOfRange(bd.toString(), Locale.getDefault()));
         }
       } else {
         return bd.longValue();
@@ -908,7 +909,7 @@ public class SqlLiteral extends SqlNode {
       bits = BitString.createFromHexString(s);
     } catch (NumberFormatException e) {
       throw SqlUtil.newContextException(pos,
-          RESOURCE.binaryLiteralInvalid());
+          RESOURCE.binaryLiteralInvalid(Locale.getDefault()));
     }
     return new SqlBinaryStringLiteral(bits, pos);
   }
@@ -927,7 +928,7 @@ public class SqlLiteral extends SqlNode {
     try {
       bits = BitString.createFromBytes(bytes);
     } catch (NumberFormatException e) {
-      throw SqlUtil.newContextException(pos, RESOURCE.binaryLiteralInvalid());
+      throw SqlUtil.newContextException(pos, RESOURCE.binaryLiteralInvalid(Locale.getDefault()));
     }
     return new SqlBinaryStringLiteral(bits, pos);
   }
@@ -994,7 +995,7 @@ public class SqlLiteral extends SqlNode {
         }
         if ((i + 5) > n) {
           throw SqlUtil.newContextException(getParserPosition(),
-              RESOURCE.unicodeEscapeMalformed(i));
+              RESOURCE.unicodeEscapeMalformed(i, Locale.getDefault()));
         }
         final String u = s.substring(i + 1, i + 5);
         final int v;
@@ -1002,7 +1003,7 @@ public class SqlLiteral extends SqlNode {
           v = Integer.parseInt(u, 16);
         } catch (NumberFormatException ex) {
           throw SqlUtil.newContextException(getParserPosition(),
-              RESOURCE.unicodeEscapeMalformed(i));
+              RESOURCE.unicodeEscapeMalformed(i, Locale.getDefault()));
         }
         sb.append((char) (v & 0xFFFF));
 

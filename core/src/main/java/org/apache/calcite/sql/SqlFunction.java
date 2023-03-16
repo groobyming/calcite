@@ -19,6 +19,7 @@ package org.apache.calcite.sql;
 import static org.apache.calcite.util.Static.RESOURCE;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Locale;
 import org.apache.calcite.linq4j.function.Functions;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeSystem;
@@ -208,7 +209,7 @@ public class SqlFunction extends SqlOperator {
   protected void validateQuantifier(SqlValidator validator, SqlCall call) {
     if ((null != call.getFunctionQuantifier()) && !isQuantifierAllowed()) {
       throw validator.newValidationError(call.getFunctionQuantifier(),
-          RESOURCE.functionQuantifierNotAllowed(call.getOperator().getName()));
+          RESOURCE.functionQuantifierNotAllowed(call.getOperator().getName(), Locale.getDefault()));
     }
   }
 

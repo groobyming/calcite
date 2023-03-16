@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.sql.SqlBasicTypeNameSpec;
@@ -191,7 +192,7 @@ public class SqlJsonValueFunction extends SqlFunction {
     if (throwOnFailure) {
       throw callBinding.newError(
           RESOURCE.cannotCastValue(inType.toString(),
-              outType.toString()));
+              outType.toString(), Locale.getDefault()));
     }
     return false;
   }

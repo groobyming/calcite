@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.linq4j.Linq4j;
 import org.apache.calcite.linq4j.Ord;
@@ -270,7 +271,7 @@ public class SqlValidatorUtil {
     final int i = Util.firstDuplicate(names);
     if (i >= 0) {
       throw validationErrorFunction.apply(columnList.get(i),
-          RESOURCE.duplicateNameInColumnList(Util.last(names.get(i))));
+          RESOURCE.duplicateNameInColumnList(Util.last(names.get(i)), Locale.getDefault()));
     }
   }
 

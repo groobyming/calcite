@@ -161,7 +161,7 @@ public class SqlCollation implements Serializable {
           col1.collationName,
           "" + col1.coercibility,
           col2.collationName,
-          "" + col2.coercibility).ex();
+          "" + col2.coercibility, Locale.getDefault()).ex();
     }
     return ret;
   }
@@ -249,7 +249,7 @@ public class SqlCollation implements Serializable {
         }
         throw RESOURCE.differentCollations(
             col1.collationName,
-            col2.collationName).ex();
+            col2.collationName, Locale.getDefault()).ex();
       default:
         throw Util.unexpected(coercibility2);
       }

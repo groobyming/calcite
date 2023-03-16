@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.jdbc.CalcitePrepare;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.materialize.MaterializationKey;
@@ -96,7 +97,7 @@ public class SqlCreateTableFromModel extends SqlCreateTable
       if (!ifNotExists) {
         // They did not specify IF NOT EXISTS, so give error.
         throw SqlUtil.newContextException(name.getParserPosition(),
-            RESOURCE.tableExists(pair.right));
+            RESOURCE.tableExists(pair.right, Locale.getDefault()));
       }
       return;
     }

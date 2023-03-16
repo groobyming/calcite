@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCallBinding;
 import org.apache.calcite.sql.SqlNode;
@@ -76,7 +77,7 @@ public class MultisetOperandTypeChecker implements SqlOperandTypeChecker {
         throw callBinding.newError(
             RESOURCE.typeNotComparable(
                 op0.getParserPosition().toString(),
-                op1.getParserPosition().toString()));
+                op1.getParserPosition().toString(), Locale.getDefault()));
       }
 
       return false;

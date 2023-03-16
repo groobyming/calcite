@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
@@ -72,7 +73,7 @@ public class SqlFilterOperator extends SqlBinaryOperator {
     SqlCall aggCall = getAggCall(call);
     if (!aggCall.getOperator().isAggregator()) {
       throw validator.newValidationError(aggCall,
-          RESOURCE.filterNonAggregate());
+          RESOURCE.filterNonAggregate(Locale.getDefault()));
     }
     final SqlNode condition = call.operand(1);
     SqlNodeList orderList = null;
@@ -85,7 +86,7 @@ public class SqlFilterOperator extends SqlBinaryOperator {
     final RelDataType type = validator.deriveType(scope, condition);
     if (!SqlTypeUtil.inBooleanFamily(type)) {
       throw validator.newValidationError(condition,
-          RESOURCE.condMustBeBoolean("FILTER"));
+          RESOURCE.condMustBeBoolean("FILTER", Locale.getDefault()));
     }
   }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeComparability;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -316,14 +317,14 @@ public abstract class OperandTypes {
             if (throwOnFailure) {
               throw callBinding.newError(
                   RESOURCE.argumentMustBePositiveInteger(
-                      callBinding.getOperator().getName()));
+                      callBinding.getOperator().getName(), Locale.getDefault()));
             }
             return false;
           }
           if (value.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0) {
             if (throwOnFailure) {
               throw callBinding.newError(
-                  RESOURCE.numberLiteralOutOfRange(value.toString()));
+                  RESOURCE.numberLiteralOutOfRange(value.toString(), Locale.getDefault()));
             }
             return false;
           }
