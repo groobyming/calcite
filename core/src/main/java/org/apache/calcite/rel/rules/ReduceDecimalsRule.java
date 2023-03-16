@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.rel.rules;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.plan.Convention;
 import org.apache.calcite.plan.RelOptRule;
@@ -984,7 +985,7 @@ public class ReduceDecimalsRule extends RelOptRule {
       assert SqlTypeUtil.isExactNumeric(typeA);
       assert SqlTypeUtil.isExactNumeric(typeB);
       if (scaleA != 0 || scaleB != 0) {
-        throw RESOURCE.argumentMustHaveScaleZero(call.getOperator().getName())
+        throw RESOURCE.argumentMustHaveScaleZero(call.getOperator().getName(), Locale.getDefault())
             .ex();
       }
       RexNode result =

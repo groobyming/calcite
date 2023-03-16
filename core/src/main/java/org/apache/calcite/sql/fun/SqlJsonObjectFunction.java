@@ -75,7 +75,7 @@ public class SqlJsonObjectFunction extends SqlFunction {
       RelDataType nameType = callBinding.getOperandType(i);
       if (!SqlTypeUtil.inCharFamily(nameType)) {
         if (throwOnFailure) {
-          throw callBinding.newError(RESOURCE.expectedCharacter());
+          throw callBinding.newError(RESOURCE.expectedCharacter(Locale.getDefault()));
         }
         return false;
       }
@@ -83,7 +83,7 @@ public class SqlJsonObjectFunction extends SqlFunction {
         if (throwOnFailure) {
           throw callBinding.newError(
               RESOURCE.argumentMustNotBeNull(
-                  callBinding.operand(i).toString()));
+                  callBinding.operand(i).toString(), Locale.getDefault()));
         }
         return false;
       }

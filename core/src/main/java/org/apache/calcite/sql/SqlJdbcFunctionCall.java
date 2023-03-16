@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.fun.SqlLibraryOperators;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
@@ -443,7 +444,7 @@ public class SqlJdbcFunctionCall extends SqlFunction {
       SqlCall call) {
     if (null == lookupMakeCallObj) {
       throw validator.newValidationError(call,
-          RESOURCE.functionUndefined(getName()));
+          RESOURCE.functionUndefined(getName(), Locale.getDefault()));
     }
     return lookupMakeCallObj.getOperator().rewriteCall(validator, call);
   }
@@ -483,14 +484,14 @@ public class SqlJdbcFunctionCall extends SqlFunction {
 
     if (null == lookupMakeCallObj) {
       throw callBinding.newValidationError(
-          RESOURCE.functionUndefined(getName()));
+          RESOURCE.functionUndefined(getName(), Locale.getDefault()));
     }
 
     final String message = lookupMakeCallObj.isValidArgCount(callBinding);
     if (message != null) {
       throw callBinding.newValidationError(
           RESOURCE.wrongNumberOfParam(getName(), thisOperands.length,
-              message));
+              message, Locale.getDefault()));
     }
 
     final SqlCall newCall = getLookupCall();

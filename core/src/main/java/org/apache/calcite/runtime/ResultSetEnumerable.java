@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.runtime;
 
+import java.util.Locale;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.avatica.SqlType;
 import org.apache.calcite.linq4j.AbstractEnumerable;
@@ -271,7 +272,7 @@ public class ResultSetEnumerable<T> extends AbstractEnumerable<T> {
         return Linq4j.singletonEnumerator((T) updateCount);
       }
     } catch (SQLException e) {
-      throw Static.RESOURCE.exceptionWhilePerformingQueryOnJdbcSubSchema(sql)
+      throw Static.RESOURCE.exceptionWhilePerformingQueryOnJdbcSubSchema(sql, Locale.getDefault())
           .ex(e);
     } finally {
       closeIfPossible(connection, statement);
@@ -296,7 +297,7 @@ public class ResultSetEnumerable<T> extends AbstractEnumerable<T> {
         return Linq4j.singletonEnumerator((T) updateCount);
       }
     } catch (SQLException e) {
-      throw Static.RESOURCE.exceptionWhilePerformingQueryOnJdbcSubSchema(sql)
+      throw Static.RESOURCE.exceptionWhilePerformingQueryOnJdbcSubSchema(sql, Locale.getDefault())
           .ex(e);
     } finally {
       closeIfPossible(connection, preparedStatement);
@@ -312,7 +313,7 @@ public class ResultSetEnumerable<T> extends AbstractEnumerable<T> {
     if (secondsLeft <= 0) {
       throw Static.RESOURCE.queryExecutionTimeoutReached(
           String.valueOf(timeout),
-          String.valueOf(Instant.ofEpochMilli(queryStart))).ex();
+          String.valueOf(Instant.ofEpochMilli(queryStart)), Locale.getDefault()).ex();
     }
     if (secondsLeft > Integer.MAX_VALUE) {
       // Just ignore the timeout if it happens to be too big, we can't squeeze it into int

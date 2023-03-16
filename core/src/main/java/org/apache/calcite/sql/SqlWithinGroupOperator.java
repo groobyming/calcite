@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
@@ -62,7 +63,7 @@ public class SqlWithinGroupOperator extends SqlBinaryOperator {
     SqlCall aggCall = call.operand(0);
     if (!aggCall.getOperator().isAggregator()) {
       throw validator.newValidationError(call,
-          RESOURCE.withinGroupNotAllowed(aggCall.getOperator().getName()));
+          RESOURCE.withinGroupNotAllowed(aggCall.getOperator().getName(), Locale.getDefault()));
     }
     final SqlNodeList orderList = call.operand(1);
     for (SqlNode order : orderList) {

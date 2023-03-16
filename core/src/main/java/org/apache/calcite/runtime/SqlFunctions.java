@@ -216,7 +216,7 @@ public class SqlFunctions {
   public static String regexpReplace(String s, String regex, String replacement,
       int pos, int occurrence, String matchType) {
     if (pos < 1 || pos > s.length()) {
-      throw RESOURCE.invalidInputForRegexpReplace(Integer.toString(pos)).ex();
+      throw RESOURCE.invalidInputForRegexpReplace(Integer.toString(pos), Locale.getDefault()).ex();
     }
 
     final int flags = makeRegexpFlags(matchType);
@@ -243,7 +243,7 @@ public class SqlFunctions {
           flags |= Pattern.MULTILINE;
           break;
         default:
-          throw RESOURCE.invalidInputForRegexpReplace(stringFlags).ex();
+          throw RESOURCE.invalidInputForRegexpReplace(stringFlags, Locale.getDefault()).ex();
         }
       }
     }
@@ -258,7 +258,7 @@ public class SqlFunctions {
     }
     int e = s + l;
     if (e < s) {
-      throw RESOURCE.illegalNegativeSubstringLength().ex();
+      throw RESOURCE.illegalNegativeSubstringLength(Locale.getDefault()).ex();
     }
     if (s > lc || e < 1) {
       return "";
@@ -281,7 +281,7 @@ public class SqlFunctions {
     }
     int e = s + l;
     if (e < s) {
-      throw RESOURCE.illegalNegativeSubstringLength().ex();
+      throw RESOURCE.illegalNegativeSubstringLength(Locale.getDefault()).ex();
     }
     if (s > lc || e < 1) {
       return ByteString.EMPTY;
@@ -472,7 +472,7 @@ public class SqlFunctions {
   public static String trim(boolean left, boolean right, String seek,
       String s, boolean strict) {
     if (strict && seek.length() != 1) {
-      throw RESOURCE.trimError().ex();
+      throw RESOURCE.trimError(Locale.getDefault()).ex();
     }
     int j = s.length();
     if (right) {
@@ -1051,13 +1051,13 @@ public class SqlFunctions {
   private static RuntimeException notArithmetic(String op, Object b0,
       Object b1) {
     return RESOURCE.invalidTypesForArithmetic(b0.getClass().toString(),
-        op, b1.getClass().toString()).ex();
+        op, b1.getClass().toString(), Locale.getDefault()).ex();
   }
 
   private static RuntimeException notComparable(String op, Object b0,
       Object b1) {
     return RESOURCE.invalidTypesForComparison(b0.getClass().toString(),
-        op, b1.getClass().toString()).ex();
+        op, b1.getClass().toString(), Locale.getDefault()).ex();
   }
 
   // &
@@ -1676,7 +1676,7 @@ public class SqlFunctions {
 
   @NonDeterministic
   private static Object cannotConvert(Object o, Class toType) {
-    throw RESOURCE.cannotConvert(o.toString(), toType.toString()).ex();
+    throw RESOURCE.cannotConvert(o.toString(), toType.toString(), Locale.getDefault()).ex();
   }
 
   /** CAST(VARCHAR AS BOOLEAN). */
@@ -1687,7 +1687,7 @@ public class SqlFunctions {
     } else if (s.equalsIgnoreCase("FALSE")) {
       return false;
     } else {
-      throw RESOURCE.invalidCharacterForCast(s).ex();
+      throw RESOURCE.invalidCharacterForCast(s, Locale.getDefault()).ex();
     }
   }
 
@@ -2429,7 +2429,7 @@ public class SqlFunctions {
     case 1:
       return list.get(0);
     default:
-      throw RESOURCE.moreThanOneValueInList(list.toString()).ex();
+      throw RESOURCE.moreThanOneValueInList(list.toString(), Locale.getDefault()).ex();
     }
   }
 
@@ -2717,7 +2717,7 @@ public class SqlFunctions {
         Field structField = beanClass.getDeclaredField(fieldName);
         return structField.get(structObject);
       } catch (NoSuchFieldException | IllegalAccessException ex) {
-        throw RESOURCE.failedToAccessField(fieldName, beanClass.getName()).ex(ex);
+        throw RESOURCE.failedToAccessField(fieldName, beanClass.getName(), Locale.getDefault()).ex(ex);
       }
     }
   }

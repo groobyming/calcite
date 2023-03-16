@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.sql.SqlAggFunction;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlFunctionCategory;
@@ -68,14 +69,14 @@ public class SqlAbstractGroupFunction extends SqlAggFunction {
     final SqlSelect select = selectScope.getNode();
     if (!validator.isAggregate(select)) {
       throw validator.newValidationError(call,
-          Static.RESOURCE.groupingInAggregate(getName()));
+          Static.RESOURCE.groupingInAggregate(getName(), Locale.getDefault()));
     }
     final AggregatingSelectScope aggregatingSelectScope =
         SqlValidatorUtil.getEnclosingAggregateSelectScope(scope);
     if (aggregatingSelectScope == null) {
       // We're probably in the GROUP BY clause
       throw validator.newValidationError(call,
-          Static.RESOURCE.groupingInWrongClause(getName()));
+          Static.RESOURCE.groupingInWrongClause(getName(), Locale.getDefault()));
     }
     for (SqlNode operand : call.getOperandList()) {
       if (scope instanceof OrderByScope) {
@@ -85,7 +86,7 @@ public class SqlAbstractGroupFunction extends SqlAggFunction {
       }
       if (!aggregatingSelectScope.resolved.get().isGroupingExpr(operand)) {
         throw validator.newValidationError(operand,
-            Static.RESOURCE.groupingArgument(getName()));
+            Static.RESOURCE.groupingArgument(getName(), Locale.getDefault()));
       }
     }
   }

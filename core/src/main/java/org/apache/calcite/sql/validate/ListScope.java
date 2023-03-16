@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.rel.type.StructKind;
@@ -136,14 +137,14 @@ public abstract class ListScope extends DelegatingScope {
     switch (map.size()) {
     case 0:
       throw validator.newValidationError(ctx,
-          RESOURCE.columnNotFound(columnName));
+          RESOURCE.columnNotFound(columnName, Locale.getDefault()));
     case 1:
       final Map.Entry<String, ScopeChild> entry =
           map.entrySet().iterator().next();
       return Pair.of(entry.getKey(), entry.getValue().namespace);
     default:
       throw validator.newValidationError(ctx,
-          RESOURCE.columnAmbiguous(columnName));
+          RESOURCE.columnAmbiguous(columnName, Locale.getDefault()));
     }
   }
 
@@ -222,7 +223,7 @@ public abstract class ListScope extends DelegatingScope {
       return type;
     default:
       throw validator.newValidationError(ctx,
-          RESOURCE.columnAmbiguous(columnName));
+          RESOURCE.columnAmbiguous(columnName, Locale.getDefault()));
     }
   }
 

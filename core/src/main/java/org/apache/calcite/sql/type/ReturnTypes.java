@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeField;
@@ -604,7 +605,7 @@ public abstract class ReturnTypes {
             throw opBinding.newError(
                 RESOURCE.typeNotComparable(
                     argType0.getFullTypeString(),
-                    argType1.getFullTypeString()));
+                    argType1.getFullTypeString(), Locale.getDefault()));
           }
 
           pickedCollation =

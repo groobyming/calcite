@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.sql.SqlCall;
@@ -96,7 +97,7 @@ public class SqlMultisetQueryConstructor extends SqlSpecialOperator {
             argTypes);
     if (null == componentType) {
       if (throwOnFailure) {
-        throw callBinding.newValidationError(RESOURCE.needSameTypeParameter());
+        throw callBinding.newValidationError(RESOURCE.needSameTypeParameter(Locale.getDefault()));
       }
       return false;
     }

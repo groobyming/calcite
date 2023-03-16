@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rex.RexWindowBound;
@@ -299,7 +300,7 @@ public class SqlWindow extends SqlCall {
         lowerLitType = ((SqlLiteral) lowerBound).getValue();
         if (Bound.UNBOUNDED_FOLLOWING == lowerLitType) {
           throw validator.newValidationError(lowerBound,
-              RESOURCE.badLowerBoundary());
+              RESOURCE.badLowerBoundary(Locale.getDefault()));
         }
       } else if (lowerBound instanceof SqlCall) {
         lowerOp = ((SqlCall) lowerBound).getOperator();
@@ -310,7 +311,7 @@ public class SqlWindow extends SqlCall {
         upperLitType = ((SqlLiteral) upperBound).getValue();
         if (Bound.UNBOUNDED_PRECEDING == upperLitType) {
           throw validator.newValidationError(upperBound,
-              RESOURCE.badUpperBoundary());
+              RESOURCE.badUpperBoundary(Locale.getDefault()));
         }
       } else if (upperBound instanceof SqlCall) {
         upperOp = ((SqlCall) upperBound).getOperator();
@@ -321,7 +322,7 @@ public class SqlWindow extends SqlCall {
       if (null != upperOp) {
         if (upperOp == PRECEDING_OPERATOR) {
           throw validator.newValidationError(upperBound,
-              RESOURCE.currentRowPrecedingError());
+              RESOURCE.currentRowPrecedingError(Locale.getDefault()));
         }
       }
     } else if (null != lowerOp) {
@@ -329,12 +330,12 @@ public class SqlWindow extends SqlCall {
         if (null != upperOp) {
           if (upperOp == PRECEDING_OPERATOR) {
             throw validator.newValidationError(upperBound,
-                RESOURCE.followingBeforePrecedingError());
+                RESOURCE.followingBeforePrecedingError(Locale.getDefault()));
           }
         } else if (null != upperLitType) {
           if (Bound.CURRENT_ROW == upperLitType) {
             throw validator.newValidationError(upperBound,
-                RESOURCE.currentRowFollowingError());
+                RESOURCE.currentRowFollowingError(Locale.getDefault()));
           }
         }
       }
@@ -411,7 +412,7 @@ public class SqlWindow extends SqlCall {
     final SqlNodeList partitions = getPartitionList();
     if (0 != partitions.size()) {
       throw validator.newValidationError(partitions.get(0),
-          RESOURCE.partitionNotAllowed());
+          RESOURCE.partitionNotAllowed(Locale.getDefault()));
     }
 
     // 7.11 rule 10d
@@ -419,7 +420,7 @@ public class SqlWindow extends SqlCall {
     final SqlNodeList refOrder = that.getOrderList();
     if ((0 != baseOrder.size()) && (0 != refOrder.size())) {
       throw validator.newValidationError(baseOrder.get(0),
-          RESOURCE.orderByOverlap());
+          RESOURCE.orderByOverlap(Locale.getDefault()));
     }
 
     // 711 rule 10e
@@ -427,7 +428,7 @@ public class SqlWindow extends SqlCall {
     final SqlNode upperBound = that.getUpperBound();
     if ((null != lowerBound) || (null != upperBound)) {
       throw validator.newValidationError(that.isRows,
-          RESOURCE.refWindowWithFrame());
+          RESOURCE.refWindowWithFrame(Locale.getDefault()));
     }
 
     SqlIdentifier declNameNew = declName;
@@ -476,7 +477,7 @@ public class SqlWindow extends SqlCall {
         return true;
       } else {
         throw validator.newValidationError(clonedOperand,
-            RESOURCE.cannotOverrideWindowAttribute());
+            RESOURCE.cannotOverrideWindowAttribute(Locale.getDefault()));
       }
     }
     return false;
@@ -541,7 +542,7 @@ public class SqlWindow extends SqlCall {
         partitionItem.accept(Util.OverFinder.INSTANCE);
       } catch (ControlFlowException e) {
         throw validator.newValidationError(this,
-            RESOURCE.partitionbyShouldNotContainOver());
+            RESOURCE.partitionbyShouldNotContainOver(Locale.getDefault()));
       }
 
       partitionItem.validateExpr(validator, operandScope);
@@ -555,7 +556,7 @@ public class SqlWindow extends SqlCall {
         orderItem.accept(Util.OverFinder.INSTANCE);
       } catch (ControlFlowException e) {
         throw validator.newValidationError(this,
-            RESOURCE.orderbyShouldNotContainOver());
+            RESOURCE.orderbyShouldNotContainOver(Locale.getDefault()));
       }
 
       try {
@@ -571,14 +572,14 @@ public class SqlWindow extends SqlCall {
         && !SqlValidatorUtil.containsMonotonic(scope)
         && windowCall != null
         && windowCall.getOperator().requiresOrder()) {
-      throw validator.newValidationError(this, RESOURCE.funcNeedsOrderBy());
+      throw validator.newValidationError(this, RESOURCE.funcNeedsOrderBy(Locale.getDefault()));
     }
 
     // Run framing checks if there are any
     if (upperBound != null || lowerBound != null) {
       // 6.10 Rule 6a RANK & DENSE_RANK do not allow ROWS or RANGE
       if (windowCall != null && !windowCall.getOperator().allowsFraming()) {
-        throw validator.newValidationError(isRows, RESOURCE.rankWithFrame());
+        throw validator.newValidationError(isRows, RESOURCE.rankWithFrame(Locale.getDefault()));
       }
       SqlTypeFamily orderTypeFam = null;
 
@@ -587,7 +588,7 @@ public class SqlWindow extends SqlCall {
         // if order by is a compound list then range not allowed
         if (orderList.size() > 1 && !isRows()) {
           throw validator.newValidationError(isRows,
-              RESOURCE.compoundOrderByProhibitsRange());
+              RESOURCE.compoundOrderByProhibitsRange(Locale.getDefault()));
         }
 
         // get the type family for the sort key for Frame Boundary Val.
@@ -602,7 +603,7 @@ public class SqlWindow extends SqlCall {
         // sorted already
         if (!isRows() && !SqlValidatorUtil.containsMonotonic(scope)) {
           throw validator.newValidationError(this,
-              RESOURCE.overMissingOrderBy());
+              RESOURCE.overMissingOrderBy(Locale.getDefault()));
         }
       }
 
@@ -626,12 +627,12 @@ public class SqlWindow extends SqlCall {
         && !SqlValidatorUtil.containsMonotonic(scope)
         && windowCall != null
         && windowCall.getOperator().requiresOrder()) {
-      throw validator.newValidationError(this, RESOURCE.overMissingOrderBy());
+      throw validator.newValidationError(this, RESOURCE.overMissingOrderBy(Locale.getDefault()));
     }
 
     if (!isRows() && !isAllowPartial()) {
       throw validator.newValidationError(allowPartial,
-          RESOURCE.cannotUseDisallowPartialWithRange());
+          RESOURCE.cannotUseDisallowPartialWithRange(Locale.getDefault()));
     }
   }
 
@@ -671,7 +672,7 @@ public class SqlWindow extends SqlCall {
               || (0 > boundLiteral.longValue(true))) {
             // true == throw if not exact (we just tested that - right?)
             throw validator.newValidationError(boundVal,
-                RESOURCE.rowMustBeNonNegativeIntegral());
+                RESOURCE.rowMustBeNonNegativeIntegral(Locale.getDefault()));
           }
         } else {
           // Allow expressions in ROWS clause
@@ -687,7 +688,7 @@ public class SqlWindow extends SqlCall {
         case NUMERIC:
           if (SqlTypeFamily.NUMERIC != bndTypeFam) {
             throw validator.newValidationError(boundVal,
-                RESOURCE.orderByRangeMismatch());
+                RESOURCE.orderByRangeMismatch(Locale.getDefault()));
           }
           break;
         case DATE:
@@ -696,12 +697,12 @@ public class SqlWindow extends SqlCall {
           if (SqlTypeFamily.INTERVAL_DAY_TIME != bndTypeFam
               && SqlTypeFamily.INTERVAL_YEAR_MONTH != bndTypeFam) {
             throw validator.newValidationError(boundVal,
-                RESOURCE.orderByRangeMismatch());
+                RESOURCE.orderByRangeMismatch(Locale.getDefault()));
           }
           break;
         default:
           throw validator.newValidationError(boundVal,
-              RESOURCE.orderByDataTypeProhibitsRange());
+              RESOURCE.orderByDataTypeProhibitsRange(Locale.getDefault()));
         }
       }
       break;

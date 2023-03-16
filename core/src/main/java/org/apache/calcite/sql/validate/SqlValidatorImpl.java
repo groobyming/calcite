@@ -662,7 +662,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         // e.g. "select s.t.* from e"
         // or "select r.* from e"
         throw newValidationError(prefixId,
-            RESOURCE.unknownIdentifier(prefixId.toString()));
+            RESOURCE.unknownIdentifier(prefixId.toString(), Locale.getDefault()));
       }
       final RelDataType rowType = resolved.only().rowType();
       if (rowType.isDynamicStruct()) {
@@ -689,7 +689,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
               field);
         }
       } else {
-        throw newValidationError(prefixId, RESOURCE.starRequiresRecordType());
+        throw newValidationError(prefixId, RESOURCE.starRequiresRecordType(Locale.getDefault()));
       }
       return true;
     }
@@ -991,10 +991,10 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       List<SqlNode> operands = ((SqlCall) node).getOperandList();
       SqlSampleSpec sampleSpec = SqlLiteral.sampleValue(operands.get(1));
       if (sampleSpec instanceof SqlSampleSpec.SqlTableSampleSpec) {
-        validateFeature(RESOURCE.sQLFeature_T613(), node.getParserPosition());
+        validateFeature(RESOURCE.sQLFeature_T613(Locale.getDefault()), node.getParserPosition());
       } else if (sampleSpec
           instanceof SqlSampleSpec.SqlSubstitutionSampleSpec) {
-        validateFeature(RESOURCE.sQLFeatureExt_T613_Substitution(),
+        validateFeature(RESOURCE.sQLFeatureExt_T613_Substitution(Locale.getDefault()),
             node.getParserPosition());
       }
     }
@@ -1019,13 +1019,13 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       RelDataType dataType = deriveType(scope, period);
       if (dataType.getSqlTypeName() != SqlTypeName.TIMESTAMP) {
         throw newValidationError(period,
-            Static.RESOURCE.illegalExpressionForTemporal(dataType.getSqlTypeName().getName()));
+            Static.RESOURCE.illegalExpressionForTemporal(dataType.getSqlTypeName().getName(), Locale.getDefault()));
       }
       if (!ns.getTable().isTemporal()) {
         List<String> qualifiedName = ns.getTable().getQualifiedName();
         String tableName = qualifiedName.get(qualifiedName.size() - 1);
         throw newValidationError(snapshot.getTableRef(),
-            Static.RESOURCE.notTemporalTable(tableName));
+            Static.RESOURCE.notTemporalTable(tableName, Locale.getDefault()));
       }
     }
   }
@@ -1743,7 +1743,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     if (type == null) {
       // TODO jvs 12-Feb-2005:  proper type name formatting
       throw newValidationError(sqlIdentifier,
-          RESOURCE.unknownDatatypeName(sqlIdentifier.toString()));
+          RESOURCE.unknownDatatypeName(sqlIdentifier.toString(), Locale.getDefault()));
     }
 
     if (resolvedConstructor == null) {
@@ -1800,7 +1800,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
             fun.getOperandCountRange().getMin();
         throw newValidationError(call,
             RESOURCE.invalidArgCount(call.getOperator().getName(),
-                expectedArgCount));
+                expectedArgCount, Locale.getDefault()));
       }
     }
 
@@ -1811,7 +1811,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
             unresolvedFunction,
             unresolvedFunction.getName());
     throw newValidationError(call,
-        RESOURCE.validatorUnknownFunction(signature));
+        RESOURCE.validatorUnknownFunction(signature, Locale.getDefault()));
   }
 
   protected void inferUnknownTypes(
@@ -1834,10 +1834,10 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
             deriveType(scope, node);
             return;
           } else {
-            throw newValidationError(node, RESOURCE.nullIllegal());
+            throw newValidationError(node, RESOURCE.nullIllegal(Locale.getDefault()));
           }
         } else {
-          throw newValidationError(node, RESOURCE.dynamicParamIllegal());
+          throw newValidationError(node, RESOURCE.dynamicParamIllegal(Locale.getDefault()));
         }
       }
 
@@ -2561,14 +2561,14 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           // there cannot be any aggregates in the ORDER BY clause.
           SqlNode agg = aggFinder.findAgg(orderList);
           if (agg != null) {
-            throw newValidationError(agg, RESOURCE.aggregateIllegalInOrderBy());
+            throw newValidationError(agg, RESOURCE.aggregateIllegalInOrderBy(Locale.getDefault()));
           }
         }
       }
       break;
 
     case INTERSECT:
-      validateFeature(RESOURCE.sQLFeature_F302(), node.getParserPosition());
+      validateFeature(RESOURCE.sQLFeature_F302(Locale.getDefault()), node.getParserPosition());
       registerSetop(
           parentScope,
           usingScope,
@@ -2579,7 +2579,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       break;
 
     case EXCEPT:
-      validateFeature(RESOURCE.sQLFeature_E071_03(), node.getParserPosition());
+      validateFeature(RESOURCE.sQLFeature_E071_03(Locale.getDefault()), node.getParserPosition());
       registerSetop(
           parentScope,
           usingScope,
@@ -2667,7 +2667,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     case UPDATE:
       if (checkUpdate) {
-        validateFeature(RESOURCE.sQLFeature_E101_03(),
+        validateFeature(RESOURCE.sQLFeature_E101_03(Locale.getDefault()),
             node.getParserPosition());
       }
       SqlUpdate updateCall = (SqlUpdate) node;
@@ -2688,7 +2688,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       break;
 
     case MERGE:
-      validateFeature(RESOURCE.sQLFeature_F312(), node.getParserPosition());
+      validateFeature(RESOURCE.sQLFeature_F312(Locale.getDefault()), node.getParserPosition());
       SqlMerge mergeCall = (SqlMerge) node;
       MergeNamespace mergeNs =
           new MergeNamespace(
@@ -2761,7 +2761,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     case MULTISET_QUERY_CONSTRUCTOR:
     case MULTISET_VALUE_CONSTRUCTOR:
-      validateFeature(RESOURCE.sQLFeature_S271(), node.getParserPosition());
+      validateFeature(RESOURCE.sQLFeature_S271(Locale.getDefault()), node.getParserPosition());
       call = (SqlCall) node;
       CollectScope cs = new CollectScope(parentScope, usingScope, call);
       final CollectNamespace tableConstructorNs =
@@ -2909,7 +2909,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
   private void validateNodeFeature(SqlNode node) {
     switch (node.getKind()) {
     case MULTISET_VALUE_CONSTRUCTOR:
-      validateFeature(RESOURCE.sQLFeature_S271(), node.getParserPosition());
+      validateFeature(RESOURCE.sQLFeature_S271(Locale.getDefault()), node.getParserPosition());
       break;
     }
   }
@@ -3005,7 +3005,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       if (!BigInteger.valueOf(longValue).equals(unscaled)) {
         // overflow
         throw newValidationError(literal,
-            RESOURCE.numberLiteralOutOfRange(bd.toString()));
+            RESOURCE.numberLiteralOutOfRange(bd.toString(), Locale.getDefault()));
       }
       break;
 
@@ -3016,7 +3016,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case BINARY:
       final BitString bitString = (BitString) literal.getValue();
       if ((bitString.getBitCount() % 8) != 0) {
-        throw newValidationError(literal, RESOURCE.binaryLiteralOdd());
+        throw newValidationError(literal, RESOURCE.binaryLiteralOdd(Locale.getDefault()));
       }
       break;
 
@@ -3028,7 +3028,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final int era = calendar.get(Calendar.ERA);
       if (year < 1 || era == GregorianCalendar.BC || year > 9999) {
         throw newValidationError(literal,
-            RESOURCE.dateLiteralOutOfRange(literal.toString()));
+            RESOURCE.dateLiteralOutOfRange(literal.toString(), Locale.getDefault()));
       }
       break;
 
@@ -3072,7 +3072,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     if (Double.isInfinite(d) || Double.isNaN(d)) {
       // overflow
       throw newValidationError(literal,
-          RESOURCE.numberLiteralOutOfRange(Util.toScientificNotation(bd)));
+          RESOURCE.numberLiteralOutOfRange(Util.toScientificNotation(bd), Locale.getDefault()));
     }
 
     // REVIEW jvs 4-Aug-2004:  what about underflow?
@@ -3112,12 +3112,12 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     if (startPrecisionOutOfRange) {
       throw newValidationError(qualifier,
           RESOURCE.intervalStartPrecisionOutOfRange(startPrecision,
-              "INTERVAL " + qualifier));
+              "INTERVAL " + qualifier, Locale.getDefault()));
     } else if (fractionalSecondPrecisionOutOfRange) {
       throw newValidationError(qualifier,
           RESOURCE.intervalFractionalSecondPrecisionOutOfRange(
               fracPrecision,
-              "INTERVAL " + qualifier));
+              "INTERVAL " + qualifier, Locale.getDefault()));
     }
   }
 
@@ -3230,7 +3230,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (!SqlTypeUtil.isComparable(leftColType, rightColType)) {
           throw newValidationError(id,
               RESOURCE.naturalOrUsingColumnNotCompatible(id.getSimple(),
-                  leftColType.toString(), rightColType.toString()));
+                  leftColType.toString(), rightColType.toString(), Locale.getDefault()));
         }
         checkRollUpInUsing(id, left, scope);
         checkRollUpInUsing(id, right, scope);
@@ -3244,7 +3244,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     if (natural) {
       if (condition != null) {
         throw newValidationError(condition,
-            RESOURCE.naturalDisallowsOnOrUsing());
+            RESOURCE.naturalDisallowsOnOrUsing(Locale.getDefault()));
       }
 
       // Join on fields that occur exactly once on each side. Ignore
@@ -3265,7 +3265,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (!SqlTypeUtil.isComparable(leftColType, rightColType)) {
           throw newValidationError(join,
               RESOURCE.naturalOrUsingColumnNotCompatible(name,
-                  leftColType.toString(), rightColType.toString()));
+                  leftColType.toString(), rightColType.toString(), Locale.getDefault()));
         }
       }
     }
@@ -3276,7 +3276,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case LEFT_SEMI_JOIN:
       if (!conformance.isLiberal()) {
         throw newValidationError(join.getJoinTypeNode(),
-            RESOURCE.dialectDoesNotSupportFeature("LEFT SEMI JOIN"));
+            RESOURCE.dialectDoesNotSupportFeature("LEFT SEMI JOIN", Locale.getDefault()));
       }
       // fall through
     case INNER:
@@ -3284,18 +3284,18 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case RIGHT:
     case FULL:
       if ((condition == null) && !natural) {
-        throw newValidationError(join, RESOURCE.joinRequiresCondition());
+        throw newValidationError(join, RESOURCE.joinRequiresCondition(Locale.getDefault()));
       }
       break;
     case COMMA:
     case CROSS:
       if (condition != null) {
         throw newValidationError(join.getConditionTypeNode(),
-            RESOURCE.crossJoinDisallowsCondition());
+            RESOURCE.crossJoinDisallowsCondition(Locale.getDefault()));
       }
       if (natural) {
         throw newValidationError(join.getConditionTypeNode(),
-            RESOURCE.crossJoinDisallowsCondition());
+            RESOURCE.crossJoinDisallowsCondition(Locale.getDefault()));
       }
       break;
     default:
@@ -3320,13 +3320,13 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     final SqlOperator op = agg.getOperator();
     if (op == SqlStdOperatorTable.OVER) {
       throw newValidationError(agg,
-          RESOURCE.windowedAggregateIllegalInClause(clause));
+          RESOURCE.windowedAggregateIllegalInClause(clause, Locale.getDefault()));
     } else if (op.isGroup() || op.isGroupAuxiliary()) {
       throw newValidationError(agg,
-          RESOURCE.groupFunctionMustAppearInGroupByClause(op.getName()));
+          RESOURCE.groupFunctionMustAppearInGroupByClause(op.getName(), Locale.getDefault()));
     } else {
       throw newValidationError(agg,
-          RESOURCE.aggregateIllegalInClause(clause));
+          RESOURCE.aggregateIllegalInClause(clause, Locale.getDefault()));
     }
   }
 
@@ -3340,12 +3340,12 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       if (field != null) {
         if (nameMatcher.frequency(rowType.getFieldNames(), name) > 1) {
           throw newValidationError(id,
-              RESOURCE.columnInUsingNotUnique(id.toString()));
+              RESOURCE.columnInUsingNotUnique(id.toString(), Locale.getDefault()));
         }
         return field.getType();
       }
     }
-    throw newValidationError(id, RESOURCE.columnNotFound(id.toString()));
+    throw newValidationError(id, RESOURCE.columnNotFound(id.toString(), Locale.getDefault()));
   }
 
   /**
@@ -3369,7 +3369,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     assert ns.rowType == null;
 
     if (select.isDistinct()) {
-      validateFeature(RESOURCE.sQLFeature_E051_01(),
+      validateFeature(RESOURCE.sQLFeature_E051_01(Locale.getDefault()),
           select.getModifierNode(SqlSelectKeyword.DISTINCT)
               .getParserPosition());
     }
@@ -3402,12 +3402,12 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final ScopeChild child =
           fromScope.children.get(duplicateAliasOrdinal);
       throw newValidationError(child.namespace.getEnclosingNode(),
-          RESOURCE.fromAliasDuplicate(child.name));
+          RESOURCE.fromAliasDuplicate(child.name, Locale.getDefault()));
     }
 
     if (select.getFrom() == null) {
       if (conformance.isFromRequired()) {
-        throw newValidationError(select, RESOURCE.selectMissingFrom());
+        throw newValidationError(select, RESOURCE.selectMissingFrom(Locale.getDefault()));
       }
     } else {
       validateFrom(select.getFrom(), fromType, fromScope);
@@ -3609,7 +3609,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     } else if (query.getKind() == SqlKind.VALUES) {
       switch (modality) {
       case STREAM:
-        throw newValidationError(query, Static.RESOURCE.cannotStreamValues());
+        throw newValidationError(query, Static.RESOURCE.cannotStreamValues(Locale.getDefault()));
       }
     } else {
       assert query.isA(SqlKind.SET_QUERY);
@@ -3617,7 +3617,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       for (SqlNode operand : call.getOperandList()) {
         if (deduceModality(operand) != modality) {
           throw newValidationError(operand,
-              Static.RESOURCE.streamSetOpInconsistentInputs());
+              Static.RESOURCE.streamSetOpInconsistentInputs(Locale.getDefault()));
         }
         validateModality(operand);
       }
@@ -3653,7 +3653,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           if (!child.namespace.supportsModality(modality)) {
             if (fail) {
               throw newValidationError(child.namespace.getNode(),
-                  Static.RESOURCE.cannotConvertToStream(child.name));
+                  Static.RESOURCE.cannotConvertToStream(child.name, Locale.getDefault()));
             } else {
               return false;
             }
@@ -3671,7 +3671,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           if (fail) {
             String inputs = String.join(", ", scope.getChildNames());
             throw newValidationError(select,
-                Static.RESOURCE.cannotStreamResultsForNonStreamingInputs(inputs));
+                Static.RESOURCE.cannotStreamResultsForNonStreamingInputs(inputs, Locale.getDefault()));
           } else {
             return false;
           }
@@ -3683,7 +3683,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (!child.namespace.supportsModality(modality)) {
           if (fail) {
             throw newValidationError(child.namespace.getNode(),
-                Static.RESOURCE.cannotConvertToRelation(child.name));
+                Static.RESOURCE.cannotConvertToRelation(child.name, Locale.getDefault()));
           } else {
             return false;
           }
@@ -3701,7 +3701,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
             || !SqlValidatorUtil.containsMonotonic(scope, groupList)) {
           if (fail) {
             throw newValidationError(aggregateNode,
-                Static.RESOURCE.streamMustGroupByMonotonic());
+                Static.RESOURCE.streamMustGroupByMonotonic(Locale.getDefault()));
           } else {
             return false;
           }
@@ -3717,7 +3717,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (!hasSortedPrefix(scope, orderList)) {
           if (fail) {
             throw newValidationError(orderList.get(0),
-                Static.RESOURCE.streamMustOrderByMonotonic());
+                Static.RESOURCE.streamMustOrderByMonotonic(Locale.getDefault()));
           } else {
             return false;
           }
@@ -3770,11 +3770,11 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     for (SqlWindow window : windows) {
       SqlIdentifier declName = window.getDeclName();
       if (!declName.isSimple()) {
-        throw newValidationError(declName, RESOURCE.windowNameMustBeSimple());
+        throw newValidationError(declName, RESOURCE.windowNameMustBeSimple(Locale.getDefault()));
       }
 
       if (windowScope.existingWindowName(declName.toString())) {
-        throw newValidationError(declName, RESOURCE.duplicateWindowName());
+        throw newValidationError(declName, RESOURCE.duplicateWindowName(Locale.getDefault()));
       } else {
         windowScope.addWindowName(declName.toString());
       }
@@ -3787,7 +3787,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       for (int j = i + 1; j < windows.size(); j++) {
         SqlNode window2 = windows.get(j);
         if (window1.equalsDeep(window2, Litmus.IGNORE)) {
-          throw newValidationError(window2, RESOURCE.dupWindowSpec());
+          throw newValidationError(window2, RESOURCE.dupWindowSpec(Locale.getDefault()));
         }
       }
     }
@@ -3819,7 +3819,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final int fieldCount = rowType.getFieldCount();
       if (withItem.columnList.size() != fieldCount) {
         throw newValidationError(withItem.columnList,
-            RESOURCE.columnCountMismatch());
+            RESOURCE.columnCountMismatch(Locale.getDefault()));
       }
       SqlValidatorUtil.checkIdentifierListForDuplicates(
           withItem.columnList.getList(), validationErrorFunction);
@@ -3830,7 +3830,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final int i = Util.firstDuplicate(fieldNames);
       if (i >= 0) {
         throw newValidationError(withItem.query,
-            RESOURCE.duplicateColumnAndNoColumnList(fieldNames.get(i)));
+            RESOURCE.duplicateColumnAndNoColumnList(fieldNames.get(i), Locale.getDefault()));
       }
     }
   }
@@ -3842,7 +3842,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     scope.resolveTable(id.names, catalogReader.nameMatcher(),
         SqlValidatorScope.Path.EMPTY, resolved);
     if (resolved.count() != 1) {
-      throw newValidationError(id, RESOURCE.tableNameNotFound(id.toString()));
+      throw newValidationError(id, RESOURCE.tableNameNotFound(id.toString(), Locale.getDefault()));
     }
     // We've found a table. But is it a sequence?
     final SqlValidatorNamespace ns = resolved.only().namespace;
@@ -3854,7 +3854,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         return;
       }
     }
-    throw newValidationError(id, RESOURCE.notASequence(id.toString()));
+    throw newValidationError(id, RESOURCE.notASequence(id.toString(), Locale.getDefault()));
   }
 
   public SqlValidatorScope getWithScope(SqlNode withItem) {
@@ -3896,7 +3896,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     }
     if (!shouldAllowIntermediateOrderBy()) {
       if (!cursorSet.contains(select)) {
-        throw newValidationError(select, RESOURCE.invalidOrderByPos());
+        throw newValidationError(select, RESOURCE.invalidOrderByPos(Locale.getDefault()));
       }
     }
     final SqlValidatorScope orderScope = getOrderScope(select);
@@ -3937,7 +3937,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
   private void validateOrderItem(SqlSelect select, SqlNode orderItem) {
     switch (orderItem.getKind()) {
     case DESCENDING:
-      validateFeature(RESOURCE.sQLConformance_OrderByDesc(),
+      validateFeature(RESOURCE.sQLConformance_OrderByDesc(Locale.getDefault()),
           orderItem.getParserPosition());
       validateOrderItem(select,
           ((SqlCall) orderItem).operand(0));
@@ -4020,7 +4020,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     SqlNode agg = aggFinder.findAgg(groupList);
     if (agg != null) {
-      throw newValidationError(agg, RESOURCE.aggregateIllegalInClause(clause));
+      throw newValidationError(agg, RESOURCE.aggregateIllegalInClause(clause, Locale.getDefault()));
     }
   }
 
@@ -4079,7 +4079,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     final RelDataType type = deriveType(scope, condition);
     if (!SqlTypeUtil.inBooleanFamily(type)) {
-      throw newValidationError(condition, RESOURCE.condMustBeBoolean(clause));
+      throw newValidationError(condition, RESOURCE.condMustBeBoolean(clause, Locale.getDefault()));
     }
   }
 
@@ -4109,7 +4109,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     having.validate(this, havingScope);
     final RelDataType type = deriveType(havingScope, having);
     if (!SqlTypeUtil.inBooleanFamily(type)) {
-      throw newValidationError(having, RESOURCE.havingMustBeBoolean());
+      throw newValidationError(having, RESOURCE.havingMustBeBoolean(Locale.getDefault()));
     }
   }
 
@@ -4185,7 +4185,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final SqlOperator op = ((SqlCall) expr).getOperator();
       if (op.isAggregator() && op.requiresOver()) {
         throw newValidationError(expr,
-            RESOURCE.absentOverClause());
+            RESOURCE.absentOverClause(Locale.getDefault()));
       }
     }
 
@@ -4217,7 +4217,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     // A scalar sub-query only has one output column.
     if (1 != selectItem.getSelectList().size()) {
       throw newValidationError(selectItem,
-          RESOURCE.onlyScalarSubQueryAllowed());
+          RESOURCE.onlyScalarSubQueryAllowed(Locale.getDefault()));
     }
 
     // No expansion in this routine just append to list.
@@ -4281,11 +4281,11 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
               baseRowType, typeFactory, id, catalogReader, relOptTable);
       if (targetField == null) {
         throw newValidationError(id,
-            RESOURCE.unknownTargetColumn(id.toString()));
+            RESOURCE.unknownTargetColumn(id.toString(), Locale.getDefault()));
       }
       if (!assignedFields.add(targetField.getIndex())) {
         throw newValidationError(id,
-            RESOURCE.duplicateTargetColumn(targetField.getName()));
+            RESOURCE.duplicateTargetColumn(targetField.getName(), Locale.getDefault()));
       }
       fields.add(targetField);
     }
@@ -4406,7 +4406,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           final ValidationError validationError =
               new ValidationError(sourceValue,
                   RESOURCE.viewConstraintNotSatisfied(colName,
-                      Util.last(validatorTable.getQualifiedName())));
+                      Util.last(validatorTable.getQualifiedName()), Locale.getDefault()));
           RelOptUtil.validateValueAgainstConstraint(sourceValue,
               projectMap.get(colIndex), validationError);
         }
@@ -4449,7 +4449,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           final ValidationError validationError =
               new ValidationError(column.right,
                   RESOURCE.viewConstraintNotSatisfied(columnName,
-                      Util.last(validatorTable.getQualifiedName())));
+                      Util.last(validatorTable.getQualifiedName()), Locale.getDefault()));
           RelOptUtil.validateValueAgainstConstraint(column.right,
               columnConstraint, validationError);
         }
@@ -4484,7 +4484,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       // we allow the source row fields equals with either the target row fields num,
       // or the number of real(exclusive columns that can not insert into) target row fields.
       throw newValidationError(node,
-          RESOURCE.unmatchInsertColumn(targetFieldCount, sourceFieldCount));
+          RESOURCE.unmatchInsertColumn(targetFieldCount, sourceFieldCount, Locale.getDefault()));
     }
     // Ensure that non-nullable fields are targeted.
     for (final RelDataTypeField field : table.getRowType().getFieldList()) {
@@ -4495,7 +4495,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         assert !field.getType().isNullable();
         if (targetField == null) {
           throw newValidationError(node,
-              RESOURCE.columnNotNullable(field.getName()));
+              RESOURCE.columnNotNullable(field.getName(), Locale.getDefault()));
         }
         break;
       case NULLABLE:
@@ -4506,7 +4506,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (targetField != null
             && !isValuesWithDefault(source, targetField.getIndex())) {
           throw newValidationError(node,
-              RESOURCE.insertIntoAlwaysGenerated(field.getName()));
+              RESOURCE.insertIntoAlwaysGenerated(field.getName(), Locale.getDefault()));
         }
       }
     }
@@ -4607,7 +4607,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         throw newValidationError(node,
             RESOURCE.typeNotAssignable(
                 targetFields.get(i).getName(), targetTypeString,
-                sourceFields.get(i).getName(), sourceTypeString));
+                sourceFields.get(i).getName(), sourceTypeString, Locale.getDefault()));
       }
     }
   }
@@ -4753,7 +4753,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       if (!access.allowsAccess(requiredAccess)) {
         throw newValidationError(node,
             RESOURCE.accessNotAllowed(requiredAccess.name(),
-                table.getQualifiedName().toString()));
+                table.getQualifiedName().toString(), Locale.getDefault()));
       }
     }
   }
@@ -4802,7 +4802,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           if (!pair.right.getType().isNullable()
               && SqlUtil.isNullLiteral(pair.left, false)) {
             throw newValidationError(node,
-                RESOURCE.columnNotNullable(pair.right.getName()));
+                RESOURCE.columnNotNullable(pair.right.getName(), Locale.getDefault()));
           }
         }
       }
@@ -4827,7 +4827,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (columnCount != thisRow.operandCount()) {
           throw newValidationError(node,
               RESOURCE.incompatibleValueType(
-                  SqlStdOperatorTable.VALUES.getName()));
+                  SqlStdOperatorTable.VALUES.getName(), Locale.getDefault()));
         }
       }
 
@@ -4850,7 +4850,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (null == type) {
           throw newValidationError(node,
               RESOURCE.incompatibleValueType(
-                  SqlStdOperatorTable.VALUES.getName()));
+                  SqlStdOperatorTable.VALUES.getName(), Locale.getDefault()));
         }
       }
     }
@@ -4882,7 +4882,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       window = scope.lookupWindow(name);
     }
     if (window == null) {
-      throw newValidationError(id, RESOURCE.windowNotFound(id.toString()));
+      throw newValidationError(id, RESOURCE.windowNotFound(id.toString(), Locale.getDefault()));
     }
     return window;
   }
@@ -4905,7 +4905,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final String refName = refId.getSimple();
       SqlWindow refWindow = scope.lookupWindow(refName);
       if (refWindow == null) {
-        throw newValidationError(refId, RESOURCE.windowNotFound(refName));
+        throw newValidationError(refId, RESOURCE.windowNotFound(refName, Locale.getDefault()));
       }
       window = window.overlay(refWindow, this);
     }
@@ -5043,11 +5043,11 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       interval.validate(this, scope);
       if (((SqlIntervalLiteral) interval).signum() < 0) {
         throw newValidationError(interval,
-            RESOURCE.intervalMustBeNonNegative(interval.toValue()));
+            RESOURCE.intervalMustBeNonNegative(interval.toValue(), Locale.getDefault()));
       }
       if (orderBy == null || orderBy.size() == 0) {
         throw newValidationError(interval,
-            RESOURCE.cannotUseWithinWithoutOrderBy());
+            RESOURCE.cannotUseWithinWithoutOrderBy(Locale.getDefault()));
       }
 
       SqlNode firstOrderByColumn = orderBy.getList().get(0);
@@ -5060,7 +5060,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       RelDataType firstOrderByColumnType = deriveType(scope, identifier);
       if (firstOrderByColumnType.getSqlTypeName() != SqlTypeName.TIMESTAMP) {
         throw newValidationError(interval,
-            RESOURCE.firstColumnOfOrderByMustBeTimestamp());
+            RESOURCE.firstColumnOfOrderByMustBeTimestamp(Locale.getDefault()));
       }
 
       SqlNode expand = expand(interval, scope);
@@ -5077,14 +5077,14 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         String leftString = ((SqlIdentifier) operands.get(0)).getSimple();
         if (scope.getPatternVars().contains(leftString)) {
           throw newValidationError(operands.get(0),
-              RESOURCE.patternVarAlreadyDefined(leftString));
+              RESOURCE.patternVarAlreadyDefined(leftString, Locale.getDefault()));
         }
         scope.addPatternVar(leftString);
         for (SqlNode right : (SqlNodeList) operands.get(1)) {
           SqlIdentifier id = (SqlIdentifier) right;
           if (!scope.getPatternVars().contains(id.getSimple())) {
             throw newValidationError(id,
-                RESOURCE.unknownPattern(id.getSimple()));
+                RESOURCE.unknownPattern(id.getSimple(), Locale.getDefault()));
           }
           scope.addPatternVar(id.getSimple());
         }
@@ -5098,7 +5098,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final SqlIdentifier id = skipToCall.operand(0);
       if (!scope.getPatternVars().contains(id.getSimple())) {
         throw newValidationError(id,
-            RESOURCE.unknownPattern(id.getSimple()));
+            RESOURCE.unknownPattern(id.getSimple(), Locale.getDefault()));
       }
     }
 
@@ -5182,7 +5182,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       final String alias = alias(item);
       if (!aliases.add(alias)) {
         throw newValidationError(item,
-            Static.RESOURCE.patternVarAlreadyDefined(alias));
+            Static.RESOURCE.patternVarAlreadyDefined(alias, Locale.getDefault()));
       }
       scope.addPatternVar(alias);
     }
@@ -5205,7 +5205,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
       final RelDataType type = deriveType(scope, expand);
       if (!SqlTypeUtil.inBooleanFamily(type)) {
-        throw newValidationError(expand, RESOURCE.condMustBeBoolean("DEFINE"));
+        throw newValidationError(expand, RESOURCE.condMustBeBoolean("DEFINE", Locale.getDefault()));
       }
       setValidatedNodeType(item, type);
     }
@@ -5259,19 +5259,19 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
     for (SqlNode param : aggCall.getOperandList()) {
       if (a.findAgg(param) != null) {
-        throw newValidationError(aggCall, RESOURCE.nestedAggIllegal());
+        throw newValidationError(aggCall, RESOURCE.nestedAggIllegal(Locale.getDefault()));
       }
     }
     if (filter != null) {
       if (a.findAgg(filter) != null) {
-        throw newValidationError(filter, RESOURCE.aggregateInFilterIllegal());
+        throw newValidationError(filter, RESOURCE.aggregateInFilterIllegal(Locale.getDefault()));
       }
     }
     if (orderList != null) {
       for (SqlNode param : orderList) {
         if (a.findAgg(param) != null) {
           throw newValidationError(aggCall,
-              RESOURCE.aggregateInWithinGroupIllegal());
+              RESOURCE.aggregateInWithinGroupIllegal(Locale.getDefault()));
         }
       }
     }
@@ -5281,7 +5281,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case MANDATORY:
       if (orderList == null || orderList.size() == 0) {
         throw newValidationError(aggCall,
-            RESOURCE.aggregateMissingWithinGroupClause(op.getName()));
+            RESOURCE.aggregateMissingWithinGroupClause(op.getName(), Locale.getDefault()));
       }
       break;
     case OPTIONAL:
@@ -5295,7 +5295,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
     case FORBIDDEN:
       if (orderList != null && orderList.size() != 0) {
         throw newValidationError(aggCall,
-            RESOURCE.withinGroupClauseIllegalInAggregate(op.getName()));
+            RESOURCE.withinGroupClauseIllegalInAggregate(op.getName(), Locale.getDefault()));
       }
       break;
     default:
@@ -5325,7 +5325,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         == SqlFunctionCategory.MATCH_RECOGNIZE
         && !(operandScope instanceof MatchRecognizeScope)) {
       throw newValidationError(call,
-          Static.RESOURCE.functionMatchRecognizeOnly(call.toString()));
+          Static.RESOURCE.functionMatchRecognizeOnly(call.toString(), Locale.getDefault()));
     }
     // Delegate validation to the operator.
     operator.validateCall(call, this, scope, operandScope);
@@ -5674,7 +5674,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         } else if (n > 1) {
           // More than one column has this alias.
           throw validator.newValidationError(id,
-              RESOURCE.columnAmbiguous(name));
+              RESOURCE.columnAmbiguous(name, Locale.getDefault()));
         }
         if (havingExpr && validator.isAggregate(root)) {
           return super.visit(id);
@@ -5718,7 +5718,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           if (intValue >= 0) {
             if (intValue < 1 || intValue > select.getSelectList().size()) {
               throw validator.newValidationError(literal,
-                  RESOURCE.orderByOrdinalOutOfRange());
+                  RESOURCE.orderByOrdinalOutOfRange(Locale.getDefault()));
             }
 
             // SQL ordinals are 1-based, but Sort's are 0-based
@@ -6084,7 +6084,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
       if (type == null) {
         final SqlIdentifier last = id.getComponent(i - 1, i);
         throw newValidationError(last,
-            RESOURCE.unknownIdentifier(last.toString()));
+            RESOURCE.unknownIdentifier(last.toString(), Locale.getDefault()));
       }
 
       // Resolve rest of identifier
@@ -6102,7 +6102,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         }
         if (field == null) {
           throw newValidationError(id.getComponent(i),
-              RESOURCE.unknownField(name));
+              RESOURCE.unknownField(name, Locale.getDefault()));
         }
         type = field.getType();
       }
@@ -6164,7 +6164,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
           if (intValue >= 0) {
             if (intValue < 1 || intValue > aliasList.size()) {
               throw newValidationError(
-                  literal, RESOURCE.orderByOrdinalOutOfRange());
+                  literal, RESOURCE.orderByOrdinalOutOfRange(Locale.getDefault()));
             }
 
             // SQL ordinals are 1-based, but Sort's are 0-based
@@ -6265,28 +6265,28 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         if (isPhysicalNavigation(kind)) {
           if (isMeasure) {
             throw newValidationError(call,
-                Static.RESOURCE.patternPrevFunctionInMeasure(call.toString()));
+                Static.RESOURCE.patternPrevFunctionInMeasure(call.toString(), Locale.getDefault()));
           }
           if (firstLastCount != 0) {
             throw newValidationError(call,
-                Static.RESOURCE.patternPrevFunctionOrder(call.toString()));
+                Static.RESOURCE.patternPrevFunctionOrder(call.toString(), Locale.getDefault()));
           }
           prevNextCount++;
         } else if (isLogicalNavigation(kind)) {
           if (firstLastCount != 0) {
             throw newValidationError(call,
-                Static.RESOURCE.patternPrevFunctionOrder(call.toString()));
+                Static.RESOURCE.patternPrevFunctionOrder(call.toString(), Locale.getDefault()));
           }
           firstLastCount++;
         } else if (isAggregation(kind)) {
           // cannot apply aggregation in PREV/NEXT, FIRST/LAST
           if (firstLastCount != 0 || prevNextCount != 0) {
             throw newValidationError(call,
-                Static.RESOURCE.patternAggregationInNavigation(call.toString()));
+                Static.RESOURCE.patternAggregationInNavigation(call.toString(), Locale.getDefault()));
           }
           if (kind == SqlKind.COUNT && call.getOperandList().size() > 1) {
             throw newValidationError(call,
-                Static.RESOURCE.patternCountFunctionArg());
+                Static.RESOURCE.patternCountFunctionArg(Locale.getDefault()));
           }
           aggregateCount++;
         }
@@ -6294,7 +6294,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
 
       if (isRunningOrFinal(kind) && !isMeasure) {
         throw newValidationError(call,
-            Static.RESOURCE.patternRunningFunctionInDefine(call.toString()));
+            Static.RESOURCE.patternRunningFunctionInDefine(call.toString(), Locale.getDefault()));
       }
 
       for (SqlNode node : operands) {
@@ -6311,7 +6311,7 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
         case COUNT:
           if (vars.size() > 1) {
             throw newValidationError(call,
-                Static.RESOURCE.patternCountFunctionArg());
+                Static.RESOURCE.patternCountFunctionArg(Locale.getDefault()));
           }
           break;
         default:
@@ -6320,11 +6320,11 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
               || ((SqlCall) operands.get(0)).getOperator() != SqlStdOperatorTable.CLASSIFIER) {
             if (vars.isEmpty()) {
               throw newValidationError(call,
-                  Static.RESOURCE.patternFunctionNullCheck(call.toString()));
+                  Static.RESOURCE.patternFunctionNullCheck(call.toString(), Locale.getDefault()));
             }
             if (vars.size() != 1) {
               throw newValidationError(call,
-                  Static.RESOURCE.patternFunctionVariableCheck(call.toString()));
+                  Static.RESOURCE.patternFunctionVariableCheck(call.toString(), Locale.getDefault()));
             }
           }
           break;

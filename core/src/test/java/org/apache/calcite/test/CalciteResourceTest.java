@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.test;
 
+import java.util.Locale;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class CalciteResourceTest {
    */
   @Test public void testSqlstateProperty() {
     Map<String, String> props =
-        RESOURCE.illegalIntervalLiteral("", "").getProperties();
+        RESOURCE.illegalIntervalLiteral("", "", Locale.getDefault()).getProperties();
     assertThat(props.get("SQLSTATE"), CoreMatchers.equalTo("42000"));
   }
 }

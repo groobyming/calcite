@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCallBinding;
@@ -75,7 +76,7 @@ public class FamilyOperandTypeChecker implements SqlSingleOperandTypeChecker,
         return true;
       } else if (throwOnFailure) {
         throw callBinding.getValidator().newValidationError(node,
-            RESOURCE.nullIllegal());
+            RESOURCE.nullIllegal(Locale.getDefault()));
       } else {
         return false;
       }

@@ -830,8 +830,8 @@ public abstract class SqlUtil {
       Resources.ExInst<?> e) {
     CalciteContextException contextExcn =
         (line == endLine && col == endCol
-            ? RESOURCE.validatorContextPoint(line, col)
-            : RESOURCE.validatorContext(line, col, endLine, endCol)).ex(e.ex());
+            ? RESOURCE.validatorContextPoint(line, col, Locale.getDefault())
+            : RESOURCE.validatorContext(line, col, endLine, endCol, Locale.getDefault())).ex(e.ex());
     contextExcn.setPosition(line, col, endLine, endCol);
     return contextExcn;
   }
@@ -941,7 +941,7 @@ public abstract class SqlUtil {
       if (!Utf8.isWellFormed(bytes)) {
         //CHECKSTYLE: IGNORE 1
         final String string = new String(bytes, charset);
-        throw RESOURCE.charsetEncoding(string, charset.name()).ex();
+        throw RESOURCE.charsetEncoding(string, charset.name(), Locale.getDefault()).ex();
       }
     }
   }

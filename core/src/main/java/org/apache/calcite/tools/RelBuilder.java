@@ -1067,7 +1067,7 @@ public class RelBuilder {
     final List<String> names = ImmutableList.copyOf(tableNames);
     final RelOptTable relOptTable = relOptSchema.getTableForMember(names);
     if (relOptTable == null) {
-      throw RESOURCE.tableNotFound(String.join(".", names)).ex();
+      throw RESOURCE.tableNotFound(String.join(".", names), Locale.getDefault()).ex();
     }
     final RelNode scan = scanFactory.createScan(cluster, relOptTable);
     push(scan);
@@ -1901,7 +1901,7 @@ public class RelBuilder {
       }
     }
     if (finder.relOptTable == null) {
-      throw RESOURCE.tableNotFound(tableName).ex();
+      throw RESOURCE.tableNotFound(tableName, Locale.getDefault()).ex();
     }
 
     RelNode iterative = tableSpool(Spool.Type.LAZY, Spool.Type.LAZY, finder.relOptTable).build();
@@ -2623,7 +2623,7 @@ public class RelBuilder {
       this.orderKeys = Objects.requireNonNull(orderKeys);
       if (filter != null) {
         if (filter.getType().getSqlTypeName() != SqlTypeName.BOOLEAN) {
-          throw RESOURCE.filterMustBeBoolean().ex();
+          throw RESOURCE.filterMustBeBoolean(Locale.getDefault()).ex();
         }
         if (filter.getType().isNullable()) {
           filter = call(SqlStdOperatorTable.IS_TRUE, filter);

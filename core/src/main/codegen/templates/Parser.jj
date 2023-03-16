@@ -406,7 +406,7 @@ JAVACODE void checkQueryExpression(ExprContext exprContext)
     case ACCEPT_SUB_QUERY:
     case ACCEPT_CURSOR:
         throw SqlUtil.newContextException(getPos(),
-            RESOURCE.illegalQueryExpression());
+            RESOURCE.illegalQueryExpression(Locale.getDefault()));
     }
 }
 
@@ -415,7 +415,7 @@ JAVACODE void checkNonQueryExpression(ExprContext exprContext)
     switch (exprContext) {
     case ACCEPT_QUERY:
         throw SqlUtil.newContextException(getPos(),
-            RESOURCE.illegalNonQueryExpression());
+            RESOURCE.illegalNonQueryExpression(Locale.getDefault()));
     }
 }
 
@@ -625,7 +625,7 @@ SqlNode OrderedQueryOrExpr(ExprContext exprContext) :
             start = UnsignedNumericLiteralOrParam()
             <COMMA> count = UnsignedNumericLiteralOrParam() {
                 if (!this.conformance.isLimitStartCountAllowed()) {
-                    throw SqlUtil.newContextException(getPos(), RESOURCE.limitStartCountNotAllowed());
+                    throw SqlUtil.newContextException(getPos(), RESOURCE.limitStartCountNotAllowed(Locale.getDefault()));
                 }
             }
         |
@@ -1811,7 +1811,7 @@ SqlNode SqlTrainModel():
             literal = SqlLiteral.createCharString(modelNameValue, "UTF8", getPos());
         } catch (java.nio.charset.UnsupportedCharsetException e) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.unknownCharacterSet("UTF8"));
+                RESOURCE.unknownCharacterSet("UTF8", Locale.getDefault()));
         }
 
         SqlLiteral identifier = SqlLiteral.createCharString("model_name", "UTF8", getPos());
@@ -2765,7 +2765,7 @@ SqlNode FromClause() :
             <CROSS> { joinType = JoinType.CROSS.symbol(getPos()); } <APPLY>
             e2 = TableRef2(true) {
                 if (!this.conformance.isApplyAllowed()) {
-                    throw SqlUtil.newContextException(getPos(), RESOURCE.applyNotAllowed());
+                    throw SqlUtil.newContextException(getPos(), RESOURCE.applyNotAllowed(Locale.getDefault()));
                 }
                 e = new SqlJoin(joinType.getParserPosition(),
                     e,
@@ -2779,7 +2779,7 @@ SqlNode FromClause() :
             <OUTER> { joinType = JoinType.LEFT.symbol(getPos()); } <APPLY>
             e2 = TableRef2(true) {
                 if (!this.conformance.isApplyAllowed()) {
-                    throw SqlUtil.newContextException(getPos(), RESOURCE.applyNotAllowed());
+                    throw SqlUtil.newContextException(getPos(), RESOURCE.applyNotAllowed(Locale.getDefault()));
                 }
                 e = new SqlJoin(joinType.getParserPosition(),
                     e,
@@ -2954,7 +2954,7 @@ SqlNode TableRef2(boolean lateral) :
                 if (rate.compareTo(BigDecimal.ZERO) < 0
                     || rate.compareTo(ONE_HUNDRED) > 0)
                 {
-                    throw SqlUtil.newContextException(getPos(), RESOURCE.invalidSampleSize());
+                    throw SqlUtil.newContextException(getPos(), RESOURCE.invalidSampleSize(Locale.getDefault()));
                 }
 
                 // Treat TABLESAMPLE(0) and TABLESAMPLE(100) as no table
@@ -3034,7 +3034,7 @@ void CompoundIdentifierType(List<SqlNode> list, List<SqlNode> extendList) :
     [
         type = DataType() {
             if (!this.conformance.allowExtend()) {
-                throw SqlUtil.newContextException(getPos(), RESOURCE.extendNotAllowed());
+                throw SqlUtil.newContextException(getPos(), RESOURCE.extendNotAllowed(Locale.getDefault()));
             }
         }
         [
@@ -3518,7 +3518,7 @@ SqlNodeList OrderBy(boolean accept) :
             // Someone told us ORDER BY wasn't allowed here.  So why
             // did they bother calling us?  To get the correct
             // parser position for error reporting.
-            throw SqlUtil.newContextException(s.pos(), RESOURCE.illegalOrderBy());
+            throw SqlUtil.newContextException(s.pos(), RESOURCE.illegalOrderBy(Locale.getDefault()));
         }
     }
     <BY> e = OrderItem() {
@@ -3577,7 +3577,7 @@ SqlNodeList SortBy(boolean accept) :
     <SORT> {
         s = span();
         if (!accept) {
-            throw SqlUtil.newContextException(s.pos(), RESOURCE.illegalOrderBy());
+            throw SqlUtil.newContextException(s.pos(), RESOURCE.illegalOrderBy(Locale.getDefault()));
         }
     }
     <BY> e = SortItem() {
@@ -4389,7 +4389,7 @@ SqlKind comp() :
 |
     <NE2> {
         if (!this.conformance.isBangEqualAllowed()) {
-            throw SqlUtil.newContextException(getPos(), RESOURCE.bangEqualNotAllowed());
+            throw SqlUtil.newContextException(getPos(), RESOURCE.bangEqualNotAllowed(Locale.getDefault()));
         }
         return SqlKind.NOT_EQUALS;
     }
@@ -4429,7 +4429,7 @@ SqlNode Expression3(ExprContext exprContext) :
             && !this.conformance.allowExplicitRowValueConstructor())
         {
             throw SqlUtil.newContextException(s.end(list),
-                RESOURCE.illegalRowExpression());
+                RESOURCE.illegalRowExpression(Locale.getDefault()));
         }
         return SqlStdOperatorTable.ROW.createCall(list);
     }
@@ -4484,7 +4484,7 @@ SqlNode Expression3(ExprContext exprContext) :
                      }
                 }
                 throw SqlUtil.newContextException(span().end(list1),
-                    RESOURCE.illegalMinusDate());
+                    RESOURCE.illegalMinusDate(Locale.getDefault()));
             }
         )
     ]
@@ -5054,7 +5054,7 @@ SqlNode StringLiteral() :
             nfrags++;
         } catch (NumberFormatException ex) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.illegalBinaryString(token.image));
+                RESOURCE.illegalBinaryString(token.image, Locale.getDefault()));
         }
     }
     (
@@ -5066,7 +5066,7 @@ SqlNode StringLiteral() :
                 nfrags++;
             } catch (NumberFormatException ex) {
                 throw SqlUtil.newContextException(getPos(),
-                    RESOURCE.illegalBinaryString(token.image));
+                    RESOURCE.illegalBinaryString(token.image, Locale.getDefault()));
             }
         }
     )*
@@ -5101,7 +5101,7 @@ SqlNode StringLiteral() :
             literal = SqlLiteral.createCharString(p, charSet, getPos());
         } catch (java.nio.charset.UnsupportedCharsetException e) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.unknownCharacterSet(charSet));
+                RESOURCE.unknownCharacterSet(charSet, Locale.getDefault()));
         }
         frags = startList(literal);
         nfrags++;
@@ -5114,7 +5114,7 @@ SqlNode StringLiteral() :
                 literal = SqlLiteral.createCharString(p, charSet, getPos());
             } catch (java.nio.charset.UnsupportedCharsetException e) {
                 throw SqlUtil.newContextException(getPos(),
-                    RESOURCE.unknownCharacterSet(charSet));
+                    RESOURCE.unknownCharacterSet(charSet, Locale.getDefault()));
             }
             frags.add(literal);
             nfrags++;
@@ -5125,7 +5125,7 @@ SqlNode StringLiteral() :
         {
             if (unicodeEscapeChar == 0) {
                 throw SqlUtil.newContextException(getPos(),
-                    RESOURCE.unicodeEscapeUnexpected());
+                    RESOURCE.unicodeEscapeUnexpected(Locale.getDefault()));
             }
             String s = SqlParserUtil.parseString(token.image);
             unicodeEscapeChar = SqlParserUtil.checkUnicodeEscapeChar(s);
@@ -5534,7 +5534,7 @@ void IdentifierSegment(List<String> names, List<SqlParserPos> positions) :
     {
         if (id.length() > this.identifierMaxLength) {
             throw SqlUtil.newContextException(pos,
-                RESOURCE.identifierTooLong(id, this.identifierMaxLength));
+                RESOURCE.identifierTooLong(id, this.identifierMaxLength, Locale.getDefault()));
         }
         names.add(id);
         if (positions != null) {
@@ -5699,7 +5699,7 @@ int UnsignedIntLiteral() :
             return Integer.parseInt(t.image);
         } catch (NumberFormatException ex) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName()));
+                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName(), Locale.getDefault()));
         }
     }
 }
@@ -5719,7 +5719,7 @@ int IntLiteral() :
             return Integer.parseInt(t.image);
         } catch (NumberFormatException ex) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName()));
+                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName(), Locale.getDefault()));
         }
     }
 |
@@ -5728,7 +5728,7 @@ int IntLiteral() :
             return -Integer.parseInt(t.image);
         } catch (NumberFormatException ex) {
             throw SqlUtil.newContextException(getPos(),
-                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName()));
+                RESOURCE.invalidLiteral(t.image, Integer.class.getCanonicalName(), Locale.getDefault()));
         }
     }
 }
@@ -5817,7 +5817,7 @@ SqlTypeNameSpec SqlTypeName1(Span s) :
     (
         <GEOMETRY> {
             if (!this.conformance.allowGeometry()) {
-                throw SqlUtil.newContextException(getPos(), RESOURCE.geometryDisabled());
+                throw SqlUtil.newContextException(getPos(), RESOURCE.geometryDisabled(Locale.getDefault()));
             }
             sqlTypeName = SqlTypeName.GEOMETRY;
         }
@@ -6171,7 +6171,7 @@ SqlNode CursorExpression(ExprContext exprContext) :
         if (exprContext != ExprContext.ACCEPT_ALL
                 && exprContext != ExprContext.ACCEPT_CURSOR) {
             throw SqlUtil.newContextException(s.end(this),
-                RESOURCE.illegalCursorExpression());
+                RESOURCE.illegalCursorExpression(Locale.getDefault()));
         }
     }
     e = Expression(ExprContext.ACCEPT_QUERY) {
@@ -6370,7 +6370,7 @@ SqlNode BuiltinFunctionCall() :
                 <FROM> {
                     if (null == flag && null == trimChars) {
                         throw SqlUtil.newContextException(getPos(),
-                            RESOURCE.illegalFromEmpty());
+                            RESOURCE.illegalFromEmpty(Locale.getDefault()));
                     }
                 }
             |
@@ -6760,7 +6760,7 @@ List<SqlNode> JsonNameAndValue() :
     |
         <COLON> {
             if (kvMode) {
-                throw SqlUtil.newContextException(getPos(), RESOURCE.illegalColon());
+                throw SqlUtil.newContextException(getPos(), RESOURCE.illegalColon(Locale.getDefault()));
             }
         }
     )
@@ -6926,7 +6926,7 @@ SqlCall JsonArrayAggFunctionCall() :
         e = withinGroup(aggCall) {
             if (orderList != null) {
                 throw SqlUtil.newContextException(span.pos().plus(e.getParserPosition()),
-                    RESOURCE.ambiguousSortOrderInJsonArrayAggFunc());
+                    RESOURCE.ambiguousSortOrderInJsonArrayAggFunc(Locale.getDefault()));
             }
             return (SqlCall) e;
         }
@@ -7501,7 +7501,7 @@ SqlBinaryOperator BinaryQueryOperator() :
         |
             <SET_MINUS> {
                 if (!this.conformance.isMinusAllowed()) {
-                    throw SqlUtil.newContextException(getPos(), RESOURCE.minusNotAllowed());
+                    throw SqlUtil.newContextException(getPos(), RESOURCE.minusNotAllowed(Locale.getDefault()));
                 }
             }
         )
@@ -7563,7 +7563,7 @@ SqlBinaryOperator BinaryRowOperator() :
 |   <NE> { return SqlStdOperatorTable.NOT_EQUALS; }
 |   <NE2> {
         if (!this.conformance.isBangEqualAllowed()) {
-            throw SqlUtil.newContextException(getPos(), RESOURCE.bangEqualNotAllowed());
+            throw SqlUtil.newContextException(getPos(), RESOURCE.bangEqualNotAllowed(Locale.getDefault()));
         }
         return SqlStdOperatorTable.NOT_EQUALS;
     }
@@ -7573,7 +7573,7 @@ SqlBinaryOperator BinaryRowOperator() :
 |   <SLASH> { return SqlStdOperatorTable.DIVIDE; }
 |   <PERCENT_REMAINDER> {
         if (!this.conformance.isPercentRemainderAllowed()) {
-            throw SqlUtil.newContextException(getPos(), RESOURCE.percentRemainderNotAllowed());
+            throw SqlUtil.newContextException(getPos(), RESOURCE.percentRemainderNotAllowed(Locale.getDefault()));
         }
         return SqlStdOperatorTable.PERCENT_REMAINDER;
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.prepare;
 
+import java.util.Locale;
 import org.apache.calcite.adapter.enumerable.EnumerableCalc;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
 import org.apache.calcite.adapter.enumerable.EnumerableInterpretable;
@@ -267,7 +268,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
     if (scan == null) {
       if (fail) {
         throw validator.newValidationError(sqlNode,
-            RESOURCE.modifiableViewMustBeBasedOnSingleTable());
+            RESOURCE.modifiableViewMustBeBasedOnSingleTable(Locale.getDefault()));
       }
       return new AnalyzeViewResult(this, validator, sql, sqlNode,
           validator.getValidatedNodeType(sqlNode), root, null, null, null,
@@ -293,7 +294,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
               throw validator.newValidationError(sqlNode,
                   RESOURCE.moreThanOneMappedColumn(
                       targetRowType.getFieldList().get(index).getName(),
-                      Util.last(tablePath)));
+                      Util.last(tablePath), Locale.getDefault()));
             }
             return new AnalyzeViewResult(this, validator, sql, sqlNode,
                 validator.getValidatedNodeType(sqlNode), root, null, null, null,
@@ -323,7 +324,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
       RelOptUtil.inferViewPredicates(projectMap2, filters2, constraint);
       if (!filters2.isEmpty()) {
         throw validator.newValidationError(sqlNode,
-            RESOURCE.modifiableViewMustHaveOnlyEqualityPredicates());
+            RESOURCE.modifiableViewMustHaveOnlyEqualityPredicates(Locale.getDefault()));
       }
       retry = true;
     }
@@ -345,7 +346,7 @@ public class CalcitePrepareImpl implements CalcitePrepare {
       if (fail) {
         throw validator.newValidationError(sqlNode,
             RESOURCE.noValueSuppliedForViewColumn(field.getName(),
-                Util.last(tablePath)));
+                Util.last(tablePath), Locale.getDefault()));
       }
       return new AnalyzeViewResult(this, validator, sql, sqlNode,
           validator.getValidatedNodeType(sqlNode), root, null, null, null,

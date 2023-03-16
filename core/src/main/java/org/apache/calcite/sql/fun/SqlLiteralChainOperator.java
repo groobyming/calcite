@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCall;
@@ -146,7 +147,7 @@ public class SqlLiteralChainOperator extends SqlSpecialOperator {
       SqlParserPos pos = operand.getParserPosition();
       if (pos.getLineNum() <= prevPos.getLineNum()) {
         throw validator.newValidationError(operand,
-            RESOURCE.stringFragsOnSameLine());
+            RESOURCE.stringFragsOnSameLine(Locale.getDefault()));
       }
     }
   }

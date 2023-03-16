@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
@@ -551,12 +552,12 @@ public abstract class SqlOperator {
     }
     if (argNames.size() < call.getOperandList().size()) {
       throw validator.newValidationError(call,
-          RESOURCE.someButNotAllArgumentsAreNamed());
+          RESOURCE.someButNotAllArgumentsAreNamed(Locale.getDefault()));
     }
     final int duplicate = Util.firstDuplicate(argNames);
     if (duplicate >= 0) {
       throw validator.newValidationError(call,
-          RESOURCE.duplicateArgumentName(argNames.get(duplicate)));
+          RESOURCE.duplicateArgumentName(argNames.get(duplicate), Locale.getDefault()));
     }
     final ImmutableList.Builder<SqlNode> argBuilder = ImmutableList.builder();
     for (SqlNode operand : call.getOperandList()) {
@@ -660,7 +661,7 @@ public abstract class SqlOperator {
             && !operandTypeChecker.isOptional(operand.i)) {
           throw callBinding.getValidator().newValidationError(
               callBinding.getCall(),
-              RESOURCE.defaultForOptionalParameter());
+              RESOURCE.defaultForOptionalParameter(Locale.getDefault()));
         }
       }
     }
@@ -680,9 +681,9 @@ public abstract class SqlOperator {
     }
     if (od.getMin() == od.getMax()) {
       throw validator.newValidationError(call,
-          RESOURCE.invalidArgCount(call.getOperator().getName(), od.getMin()));
+          RESOURCE.invalidArgCount(call.getOperator().getName(), od.getMin(), Locale.getDefault()));
     } else {
-      throw validator.newValidationError(call, RESOURCE.wrongNumOfArguments());
+      throw validator.newValidationError(call, RESOURCE.wrongNumOfArguments(Locale.getDefault()));
     }
   }
 

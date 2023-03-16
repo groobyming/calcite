@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.runtime.CalciteException;
 import org.apache.calcite.runtime.Resources;
@@ -205,7 +206,7 @@ public class SqlCallBinding extends SqlOperatorBinding {
         return bd.intValueExact();
       } catch (ArithmeticException e) {
         throw SqlUtil.newContextException(node.pos,
-            RESOURCE.numberLiteralOutOfRange(bd.toString()));
+            RESOURCE.numberLiteralOutOfRange(bd.toString(), Locale.getDefault()));
       }
     }
     throw new AssertionError();
@@ -280,7 +281,7 @@ public class SqlCallBinding extends SqlOperatorBinding {
     return validator.newValidationError(call,
         RESOURCE.canNotApplyOp2Type(getOperator().getName(),
             call.getCallSignature(validator, scope),
-            getOperator().getAllowedSignatures()));
+            getOperator().getAllowedSignatures(), Locale.getDefault()));
   }
 
   /**

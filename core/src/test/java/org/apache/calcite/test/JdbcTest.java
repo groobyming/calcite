@@ -332,7 +332,7 @@ public class JdbcTest {
     employees.add(new Employee(135, 10, "Simon", 56.7f, null));
     try (TryThreadLocal.Memo ignore =
              EmpDeptTableFactory.THREAD_COLLECTION.push(employees)) {
-      Util.discard(RESOURCE.noValueSuppliedForViewColumn(null, null));
+      Util.discard(RESOURCE.noValueSuppliedForViewColumn(null, null, Locale.getDefault()));
       modelWithView("select \"name\", \"empid\" as e, \"salary\" "
               + "from \"MUTABLE_EMPLOYEES\" where \"commission\" = 10",
           true)
@@ -388,7 +388,7 @@ public class JdbcTest {
           .query("select \"name\" from \"adhoc\".V order by \"name\"")
           .runs();
 
-      Util.discard(RESOURCE.moreThanOneMappedColumn(null, null));
+      Util.discard(RESOURCE.moreThanOneMappedColumn(null, null, Locale.getDefault()));
       modelWithView(
           "select \"name\", \"empid\" as e, \"salary\", \"name\" as n2 "
               + "from \"MUTABLE_EMPLOYEES\" where \"deptno\" IN (10, 20)",
@@ -6083,9 +6083,6 @@ public class JdbcTest {
                 equalTo(false));
             assertThat(metaData.supportsMixedCaseQuotedIdentifiers(),
                 equalTo(true));
-            // Oracle JDBC 12.1.0.1.0 returns true here, however it is
-            // not clear if the bug is in JDBC specification or Oracle
-            // driver
             assertThat(metaData.storesMixedCaseQuotedIdentifiers(),
                 equalTo(false));
             assertThat(metaData.storesUpperCaseQuotedIdentifiers(),

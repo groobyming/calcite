@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlNode;
@@ -60,7 +61,7 @@ public class TableConstructorNamespace extends AbstractNamespace {
     final RelDataType tableConstructorRowType =
         validator.getTableConstructorRowType(values, scope);
     if (tableConstructorRowType == null) {
-      throw validator.newValidationError(values, RESOURCE.incompatibleTypes());
+      throw validator.newValidationError(values, RESOURCE.incompatibleTypes(Locale.getDefault()));
     }
     return tableConstructorRowType;
   }

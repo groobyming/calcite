@@ -130,7 +130,7 @@ public class ConversionUtil {
     } else if (str.equalsIgnoreCase("UNKNOWN")) {
       return null;
     } else {
-      throw RESOURCE.invalidBoolean(str).ex();
+      throw RESOURCE.invalidBoolean(str, Locale.getDefault()).ex();
     }
   }
 }

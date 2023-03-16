@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlKind;
@@ -99,7 +100,7 @@ public class SetopNamespace extends AbstractNamespace {
       for (SqlNode operand : call.getOperandList()) {
         if (!(operand.isA(SqlKind.QUERY))) {
           throw validator.newValidationError(operand,
-              RESOURCE.needQueryOp(operand.toString()));
+              RESOURCE.needQueryOp(operand.toString(), Locale.getDefault()));
         }
         validator.validateQuery(operand, scope, targetRowType);
       }

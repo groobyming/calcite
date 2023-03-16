@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.interpreter;
 
+import java.util.Locale;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.linq4j.Enumerable;
 import org.apache.calcite.linq4j.Queryable;
@@ -172,7 +173,7 @@ public class TableScanNode implements Node {
         filterableTable.scan(root, mutableFilters);
     for (RexNode filter : mutableFilters) {
       if (!filters.contains(filter)) {
-        throw RESOURCE.filterableTableInventedFilter(filter.toString()).ex();
+        throw RESOURCE.filterableTableInventedFilter(filter.toString(), Locale.getDefault()).ex();
       }
     }
     final Enumerable<Row> rowEnumerable = Enumerables.toRow(enumerable);
@@ -198,7 +199,7 @@ public class TableScanNode implements Node {
           pfTable.scan(root, mutableFilters, projectInts);
       for (RexNode filter : mutableFilters) {
         if (!filters.contains(filter)) {
-          throw RESOURCE.filterableTableInventedFilter(filter.toString())
+          throw RESOURCE.filterableTableInventedFilter(filter.toString(), Locale.getDefault())
               .ex();
         }
       }

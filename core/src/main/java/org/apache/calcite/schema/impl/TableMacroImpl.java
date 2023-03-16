@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.schema.impl;
 
+import java.util.Locale;
 import org.apache.calcite.schema.TableMacro;
 import org.apache.calcite.schema.TranslatableTable;
 
@@ -55,7 +56,7 @@ public class TableMacroImpl extends ReflectiveFunctionBase
     Class clazz = method.getDeclaringClass();
     if (!Modifier.isStatic(method.getModifiers())) {
       if (!classHasPublicZeroArgsConstructor(clazz)) {
-        throw RESOURCE.requireDefaultConstructor(clazz.getName()).ex();
+        throw RESOURCE.requireDefaultConstructor(clazz.getName(), Locale.getDefault()).ex();
       }
     }
     final Class<?> returnType = method.getReturnType();

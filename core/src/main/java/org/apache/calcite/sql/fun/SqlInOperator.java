@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rel.type.RelDataTypeField;
@@ -120,7 +121,7 @@ public class SqlInOperator extends SqlBinaryOperator {
       }
       if (null == rightType) {
         throw validator.newValidationError(right,
-            RESOURCE.incompatibleTypesInList());
+            RESOURCE.incompatibleTypesInList(Locale.getDefault()));
       }
 
       // Record the RHS type for use by SqlToRelConverter.
@@ -164,7 +165,7 @@ public class SqlInOperator extends SqlBinaryOperator {
             callBinding,
             ImmutableList.of(leftRowType, rightRowType)), callBinding)) {
       throw validator.newValidationError(call,
-          RESOURCE.incompatibleValueType(SqlStdOperatorTable.IN.getName()));
+          RESOURCE.incompatibleValueType(SqlStdOperatorTable.IN.getName(), Locale.getDefault()));
     }
 
     // Result is a boolean, nullable if there are any nullable types

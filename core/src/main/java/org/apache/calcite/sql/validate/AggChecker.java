@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlIdentifier;
 import org.apache.calcite.sql.SqlKind;
@@ -116,8 +117,8 @@ class AggChecker extends SqlBasicVisitor<Void> {
     final String exprString = originalExpr.toString();
     throw validator.newValidationError(originalExpr,
         distinct
-            ? RESOURCE.notSelectDistinctExpr(exprString)
-            : RESOURCE.notGroupExpr(exprString));
+            ? RESOURCE.notSelectDistinctExpr(exprString, Locale.getDefault())
+            : RESOURCE.notGroupExpr(exprString, Locale.getDefault()));
   }
 
   public Void visit(SqlCall call) {
@@ -145,7 +146,7 @@ class AggChecker extends SqlBasicVisitor<Void> {
         SqlNode originalExpr = validator.getOriginal(call);
         final String exprString = originalExpr.toString();
         throw validator.newValidationError(call,
-            RESOURCE.notSelectDistinctExpr(exprString));
+            RESOURCE.notSelectDistinctExpr(exprString, Locale.getDefault()));
       }
 
       // For example, 'sum(sal)' in 'SELECT sum(sal) FROM emp GROUP
@@ -198,7 +199,7 @@ class AggChecker extends SqlBasicVisitor<Void> {
       }
       throw validator.newValidationError(groupCall,
           RESOURCE.auxiliaryWithoutMatchingGroupCall(
-              call.getOperator().getName(), groupCall.getOperator().getName()));
+              call.getOperator().getName(), groupCall.getOperator().getName(), Locale.getDefault()));
     }
 
     if (call.isA(SqlKind.QUERY)) {

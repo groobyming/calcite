@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.avatica.util.TimeUnit;
 import org.apache.calcite.avatica.util.TimeUnitRange;
 import org.apache.calcite.rel.type.RelDataType;
@@ -1164,7 +1165,7 @@ public class SqlIntervalQualifier extends SqlNode {
       String value) {
     return SqlUtil.newContextException(pos,
         RESOURCE.unsupportedIntervalLiteral(
-            "'" + value + "'", "INTERVAL " + toString()));
+            "'" + value + "'", "INTERVAL " + toString(), Locale.getDefault()));
   }
 
   private CalciteContextException fieldExceedsPrecisionException(
@@ -1175,7 +1176,7 @@ public class SqlIntervalQualifier extends SqlNode {
     }
     return SqlUtil.newContextException(pos,
         RESOURCE.intervalFieldExceedsPrecision(
-            value, type.name() + "(" + precision + ")"));
+            value, type.name() + "(" + precision + ")", Locale.getDefault()));
   }
 }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.sql.SqlCall;
@@ -108,7 +109,7 @@ public class IdentifierNamespace extends AbstractNamespace {
       if (e.depth == 1) {
         throw validator.newValidationError(id,
             RESOURCE.cyclicDefinition(id.toString(),
-                SqlIdentifier.getString(e.path)));
+                SqlIdentifier.getString(e.path), Locale.getDefault()));
       } else {
         throw new CyclicDefinitionException(e.depth - 1, e.path);
       }
@@ -126,7 +127,7 @@ public class IdentifierNamespace extends AbstractNamespace {
       if (!nameMatcher.isCaseSensitive()) {
         throw validator.newValidationError(id,
             RESOURCE.objectNotFoundWithin(resolve.remainingNames.get(0),
-                SqlIdentifier.getString(resolve.path.stepNames())));
+                SqlIdentifier.getString(resolve.path.stepNames()), Locale.getDefault()));
       }
     }
 
@@ -156,21 +157,21 @@ public class IdentifierNamespace extends AbstractNamespace {
           final String next = resolve.path.stepNames().get(i + offset);
           if (prefix.isEmpty()) {
             throw validator.newValidationError(id,
-                RESOURCE.objectNotFoundDidYouMean(names.get(i), next));
+                RESOURCE.objectNotFoundDidYouMean(names.get(i), next, Locale.getDefault()));
           } else {
             throw validator.newValidationError(id,
                 RESOURCE.objectNotFoundWithinDidYouMean(names.get(i),
-                    SqlIdentifier.getString(prefix), next));
+                    SqlIdentifier.getString(prefix), next, Locale.getDefault()));
           }
         } else {
           throw validator.newValidationError(id,
               RESOURCE.objectNotFoundWithin(resolve.remainingNames.get(0),
-                  SqlIdentifier.getString(resolve.path.stepNames())));
+                  SqlIdentifier.getString(resolve.path.stepNames()), Locale.getDefault()));
         }
       }
     }
     throw validator.newValidationError(id,
-        RESOURCE.objectNotFound(id.getComponent(0).toString()));
+        RESOURCE.objectNotFound(id.getComponent(0).toString(), Locale.getDefault()));
   }
 
   public RelDataType validateImpl(RelDataType targetRowType) {

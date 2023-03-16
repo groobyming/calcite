@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.type;
 
+import java.util.Locale;
 import org.apache.calcite.rel.metadata.RelColumnMapping;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
@@ -198,7 +199,7 @@ public class TableFunctionReturnTypeInference
     for (String fieldName : expandedFieldNames) {
       if (fieldName.equals(cursorField.getName())) {
         throw opBinding.newError(
-            RESOURCE.duplicateColumnName(cursorField.getName()));
+            RESOURCE.duplicateColumnName(cursorField.getName(), Locale.getDefault()));
       }
     }
     expandedOutputTypes.add(nullableType);

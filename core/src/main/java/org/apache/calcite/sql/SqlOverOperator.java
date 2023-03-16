@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.type.OperandTypes;
@@ -72,7 +73,7 @@ public class SqlOverOperator extends SqlBinaryOperator {
       aggCall = aggCall.operand(0);
     }
     if (!aggCall.getOperator().isAggregator()) {
-      throw validator.newValidationError(aggCall, RESOURCE.overNonAggregate());
+      throw validator.newValidationError(aggCall, RESOURCE.overNonAggregate(Locale.getDefault()));
     }
     final SqlNode window = call.operand(1);
     validator.validateWindow(window, scope, aggCall);

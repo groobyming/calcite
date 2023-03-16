@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.schema.impl;
 
+import java.util.Locale;
 import org.apache.calcite.adapter.enumerable.CallImplementor;
 import org.apache.calcite.adapter.enumerable.NullPolicy;
 import org.apache.calcite.adapter.enumerable.ReflectiveCallNotNullImplementor;
@@ -102,7 +103,7 @@ public class ScalarFunctionImpl extends ReflectiveFunctionBase
     if (!Modifier.isStatic(method.getModifiers())) {
       Class clazz = method.getDeclaringClass();
       if (!classHasPublicZeroArgsConstructor(clazz)) {
-        throw RESOURCE.requireDefaultConstructor(clazz.getName())
+        throw RESOURCE.requireDefaultConstructor(clazz.getName(), Locale.getDefault())
             .ex();
       }
     }

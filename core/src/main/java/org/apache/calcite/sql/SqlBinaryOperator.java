@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.type.SqlOperandTypeChecker;
@@ -111,7 +112,7 @@ public class SqlBinaryOperator extends SqlOperator {
           : "An implicit or explicit charset should have been set";
       if (!cs1.equals(cs2)) {
         throw validator.newValidationError(call,
-            RESOURCE.incompatibleCharset(getName(), cs1.name(), cs2.name()));
+            RESOURCE.incompatibleCharset(getName(), cs1.name(), cs2.name(), Locale.getDefault()));
       }
 
       SqlCollation col1 = operandType1.getCollation();
@@ -155,7 +156,7 @@ public class SqlBinaryOperator extends SqlOperator {
           : "An implicit or explicit charset should have been set";
       if (!cs1.equals(cs2)) {
         throw validator.newValidationError(call,
-            RESOURCE.incompatibleCharset(getName(), cs1.name(), cs2.name()));
+            RESOURCE.incompatibleCharset(getName(), cs1.name(), cs2.name(), Locale.getDefault()));
       }
 
       SqlCollation col1 = operandType1.getCollation();

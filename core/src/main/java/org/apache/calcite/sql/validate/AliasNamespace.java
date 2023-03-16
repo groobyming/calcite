@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeField;
 import org.apache.calcite.sql.SqlCall;
@@ -74,7 +75,7 @@ public class AliasNamespace extends AbstractNamespace {
       String name = ((SqlIdentifier) operand).getSimple();
       if (nameList.contains(name)) {
         throw validator.newValidationError(operand,
-            RESOURCE.aliasListDuplicate(name));
+            RESOURCE.aliasListDuplicate(name, Locale.getDefault()));
       }
       nameList.add(name);
     }
@@ -85,7 +86,7 @@ public class AliasNamespace extends AbstractNamespace {
           : new SqlNodeList(columnNames, SqlParserPos.sum(columnNames));
       throw validator.newValidationError(node,
           RESOURCE.aliasListDegree(rowType.getFieldCount(), getString(rowType),
-              nameList.size()));
+              nameList.size(), Locale.getDefault()));
     }
     final List<RelDataType> typeList = new ArrayList<>();
     for (RelDataTypeField field : rowType.getFieldList()) {

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.validate;
 
+import java.util.Locale;
 import org.apache.calcite.plan.RelOptTable;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
@@ -155,7 +156,7 @@ class TableNamespace extends AbstractNamespace {
           throw validator.getValidationErrorFunction().apply(extColNode,
               RESOURCE.typeNotAssignable(
                   baseFields.get(baseIndex).getName(), baseType.getFullTypeString(),
-                  extendedField.getName(), extType.getFullTypeString()));
+                  extendedField.getName(), extType.getFullTypeString(), Locale.getDefault()));
         }
       }
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.parser;
 
+import java.util.Locale;
 import org.apache.calcite.sql.SqlNode;
 
 import com.google.common.collect.Iterables;
@@ -147,7 +148,7 @@ public class SqlParserPos implements Serializable {
   }
 
   @Override public String toString() {
-    return RESOURCE.parserContext(lineNumber, columnNumber).str();
+    return RESOURCE.parserContext(lineNumber, columnNumber, Locale.getDefault()).str();
   }
 
   /**

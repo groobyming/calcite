@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.sql.fun;
 
+import java.util.Locale;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeComparability;
 import org.apache.calcite.sql.ExplicitOperatorBinding;
@@ -211,12 +212,12 @@ public class SqlBetweenOperator extends SqlInfixOperator {
       final int line = lastPos.getEndLineNum();
       final int col = lastPos.getEndColumnNum() + 1;
       SqlParserPos errPos = new SqlParserPos(line, col, line, col);
-      throw SqlUtil.newContextException(errPos, RESOURCE.betweenWithoutAnd());
+      throw SqlUtil.newContextException(errPos, RESOURCE.betweenWithoutAnd(Locale.getDefault()));
     }
     if (!list.isOp(opOrdinal + 2)
         || list.op(opOrdinal + 2).getKind() != SqlKind.AND) {
       SqlParserPos errPos = list.pos(opOrdinal + 2);
-      throw SqlUtil.newContextException(errPos, RESOURCE.betweenWithoutAnd());
+      throw SqlUtil.newContextException(errPos, RESOURCE.betweenWithoutAnd(Locale.getDefault()));
     }
 
     // Create the expression after 'AND', but stopping if we encounter an

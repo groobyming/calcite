@@ -16,6 +16,7 @@
  */
 package org.apache.calcite.schema.impl;
 
+import java.util.Locale;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.enumerable.CallImplementor;
 import org.apache.calcite.adapter.enumerable.NullPolicy;
@@ -80,7 +81,7 @@ public class TableFunctionImpl extends ReflectiveFunctionBase implements
     if (!Modifier.isStatic(method.getModifiers())) {
       Class clazz = method.getDeclaringClass();
       if (!classHasPublicZeroArgsConstructor(clazz)) {
-        throw RESOURCE.requireDefaultConstructor(clazz.getName()).ex();
+        throw RESOURCE.requireDefaultConstructor(clazz.getName(), Locale.getDefault()).ex();
       }
     }
     final Class<?> returnType = method.getReturnType();
@@ -155,7 +156,7 @@ public class TableFunctionImpl extends ReflectiveFunctionBase implements
       throw RESOURCE.illegalArgumentForTableFunctionCall(
           method.toString(),
           Arrays.toString(method.getParameterTypes()),
-          arguments.toString()).ex(e);
+          arguments.toString(), Locale.getDefault()).ex(e);
     } catch (IllegalAccessException | InvocationTargetException
         | InstantiationException | NoSuchMethodException e) {
       throw new RuntimeException(e);
