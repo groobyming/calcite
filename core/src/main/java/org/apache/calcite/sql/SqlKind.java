@@ -441,6 +441,16 @@ public enum SqlKind {
   REGEXP,
 
   /**
+   * The "MATCH_ALL" operator.
+   */
+  MATCH_ALL,
+
+  /**
+   * The "MATCH_ANY" operator.
+   */
+  MATCH_ANY,
+
+  /**
    * The "~" operator.
    */
   POSIX_REGEX_CASE_SENSITIVE,

@@ -4290,6 +4290,10 @@ List<Object> Expression2(ExprContext exprContext) :
                             <REGEXP> { op = SqlStdOperatorTable.NOT_REGEXP; }
                         |
                             <SIMILAR> <TO> { op = SqlStdOperatorTable.NOT_SIMILAR_TO; }
+                        |
+                            <MATCH_ALL> { op = SqlStdOperatorTable.NOT_MATCH_ALL; }
+                        |
+                            <MATCH_ANY> { op = SqlStdOperatorTable.NOT_MATCH_ANY; }
                         )
                     |
                         <LIKE> { op = SqlStdOperatorTable.LIKE; }
@@ -4299,6 +4303,10 @@ List<Object> Expression2(ExprContext exprContext) :
                         <REGEXP> { op = SqlStdOperatorTable.REGEXP; }
                     |
                         <SIMILAR> <TO> { op = SqlStdOperatorTable.SIMILAR_TO; }
+                    |
+                        <MATCH_ALL> { op = SqlStdOperatorTable.MATCH_ALL; }
+                    |
+                        <MATCH_ANY> { op = SqlStdOperatorTable.MATCH_ANY; }
                     )
                 <#if parser.includePosixOperators>
                 |
@@ -7996,6 +8004,8 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < MODEL: "MODEL" >
 |   < TABLES: "TABLES" >
 |   < REGISTER: "REGISTER" >
+|   < MATCH_ALL: "MATCH_ALL" >
+|   < MATCH_ANY: "MATCH_ANY" >
 |   < MODIFIES: "MODIFIES" >
 |   < MODULE: "MODULE" >
 |   < MONTH: "MONTH" >
