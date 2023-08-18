@@ -20,7 +20,7 @@ limitations under the License.
   <parent>
     <groupId>com.tencent.bk.base.datalab</groupId>
     <artifactId>calcite</artifactId>
-    <version>1.21.0-bkbase.6</version>
+    <version>1.21.0-bkbase.7</version>
   </parent>
 
   <!-- The basics. -->

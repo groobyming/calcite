@@ -20,12 +20,12 @@ limitations under the License.
   <parent>
     <groupId>com.tencent.bk.base.datalab</groupId>
     <artifactId>calcite</artifactId>
-    <version>1.21.0-bkbase.6</version>
+    <version>1.21.0-bkbase.7</version>
   </parent>
 
   <artifactId>calcite-core</artifactId>
   <packaging>jar</packaging>
-  <version>1.21.0-bkbase.6</version>
+  <version>1.21.0-bkbase.7</version>
   <name>Calcite Core</name>
   <description>Calcite Core modified by Tencent blueking</description>
 
