@@ -4294,6 +4294,12 @@ List<Object> Expression2(ExprContext exprContext) :
                             <MATCH_ALL> { op = SqlStdOperatorTable.NOT_MATCH_ALL; }
                         |
                             <MATCH_ANY> { op = SqlStdOperatorTable.NOT_MATCH_ANY; }
+                        |
+                            <MATCH_PHRASE> { op = SqlStdOperatorTable.NOT_MATCH_PHRASE; }
+                        |
+                            <MATCH_PHRASE_PREFIX> { op = SqlStdOperatorTable.NOT_MATCH_PHRASE_PREFIX; }
+                        |
+                            <MATCH_REGEXP> { op = SqlStdOperatorTable.NOT_MATCH_REGEXP; }
                         )
                     |
                         <LIKE> { op = SqlStdOperatorTable.LIKE; }
@@ -4307,6 +4313,12 @@ List<Object> Expression2(ExprContext exprContext) :
                         <MATCH_ALL> { op = SqlStdOperatorTable.MATCH_ALL; }
                     |
                         <MATCH_ANY> { op = SqlStdOperatorTable.MATCH_ANY; }
+                    |
+                        <MATCH_PHRASE> { op = SqlStdOperatorTable.MATCH_PHRASE; }
+                    |
+                        <MATCH_PHRASE_PREFIX> { op = SqlStdOperatorTable.MATCH_PHRASE_PREFIX; }
+                    |
+                        <MATCH_REGEXP> { op = SqlStdOperatorTable.MATCH_REGEXP; }
                     )
                 <#if parser.includePosixOperators>
                 |
@@ -8006,6 +8018,9 @@ SqlPostfixOperator PostfixRowOperator() :
 |   < REGISTER: "REGISTER" >
 |   < MATCH_ALL: "MATCH_ALL" >
 |   < MATCH_ANY: "MATCH_ANY" >
+|   < MATCH_PHRASE: "MATCH_PHRASE" >
+|   < MATCH_PHRASE_PREFIX: "MATCH_PHRASE_PREFIX" >
+|   < MATCH_REGEXP: "MATCH_REGEXP" >
 |   < MODIFIES: "MODIFIES" >
 |   < MODULE: "MODULE" >
 |   < MONTH: "MONTH" >

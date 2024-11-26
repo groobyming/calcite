@@ -1393,6 +1393,24 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
   public static final SqlSpecialOperator MATCH_ANY =
           new SqlLikeOperator("MATCH_ANY", SqlKind.MATCH_ANY, false);
 
+  public static final SqlSpecialOperator NOT_MATCH_PHRASE =
+          new SqlLikeOperator("NOT MATCH_PHRASE", SqlKind.MATCH_PHRASE, true);
+
+  public static final SqlSpecialOperator MATCH_PHRASE =
+          new SqlLikeOperator("MATCH_PHRASE", SqlKind.MATCH_PHRASE, false);
+
+  public static final SqlSpecialOperator NOT_MATCH_PHRASE_PREFIX =
+          new SqlLikeOperator("NOT MATCH_PHRASE_PREFIX", SqlKind.MATCH_PHRASE_PREFIX, true);
+
+  public static final SqlSpecialOperator MATCH_PHRASE_PREFIX =
+          new SqlLikeOperator("MATCH_PHRASE_PREFIX", SqlKind.MATCH_PHRASE_PREFIX, false);
+
+  public static final SqlSpecialOperator NOT_MATCH_REGEXP =
+          new SqlLikeOperator("NOT MATCH_REGEXP", SqlKind.MATCH_REGEXP, true);
+
+  public static final SqlSpecialOperator MATCH_REGEXP =
+          new SqlLikeOperator("MATCH_REGEXP", SqlKind.MATCH_REGEXP, false);
+
   public static final SqlBinaryOperator POSIX_REGEX_CASE_SENSITIVE = new SqlPosixRegexOperator(
       "POSIX REGEX CASE SENSITIVE", SqlKind.POSIX_REGEX_CASE_SENSITIVE, true, false);
 

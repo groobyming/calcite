@@ -451,6 +451,21 @@ public enum SqlKind {
   MATCH_ANY,
 
   /**
+   * The "MATCH_PHRASE" operator.
+   */
+  MATCH_PHRASE,
+
+  /**
+   * The "MATCH_PHRASE_PREFIX" operator.
+   */
+  MATCH_PHRASE_PREFIX,
+
+  /**
+   * The "MATCH_REGEXP" operator.
+   */
+  MATCH_REGEXP,
+
+  /**
    * The "~" operator.
    */
   POSIX_REGEX_CASE_SENSITIVE,
